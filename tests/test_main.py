@@ -1,9 +1,7 @@
-from httpx import Response
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from httpx import Response
 
-
-app = FastAPI()
+from main import app
 
 
 class TestRootEndpoint:
