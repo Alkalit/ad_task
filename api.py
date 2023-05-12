@@ -1,8 +1,9 @@
-from fastapi import FastAPI
-
-app = FastAPI()
+from fastapi import APIRouter
 
 
-@app.get("/")
+router = APIRouter()
+
+
+@router.get("/")
 def root():
     return []
