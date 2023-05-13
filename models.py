@@ -6,7 +6,7 @@ from decimal import Decimal
 CampaignStatId = NewType('CampaignStatId', int)
 Channel = NewType('Channel', str)
 Country = NewType('Country', str)
-Os = NewType('Os', str)
+OS = NewType('OS', str)
 Money = NewType('Money', Decimal)
 
 
@@ -16,7 +16,7 @@ class CampaignStat:
     date: pydate
     channel: Channel
     country: Country
-    os: Os
+    os: OS
     impressions: int
     clicks: int
     installs: int
