@@ -11,7 +11,6 @@ Money = NewType('Money', Decimal)
 
 
 class CampaignStat(BaseModel):
-    id: CampaignStatId
     date: pydate
     channel: Channel
     country: Country
