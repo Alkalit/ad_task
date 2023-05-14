@@ -1,10 +1,9 @@
 from fastapi import APIRouter
-from database import SessionFactory, Base, engine
+from database import SessionFactory
 from db_models import CampaignStat
 from models import CampaignStat as CampaignStatSchema
 
 router = APIRouter()
-Base.metadata.create_all(bind=engine)
 
 
 @router.get("/")
