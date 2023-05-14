@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 from httpx import Response
 
 from main import app
-from database import SessionFactory
 from db_models import CampaignStat
 from decimal import Decimal
 from datetime import date
@@ -15,9 +14,8 @@ class TestRootEndpoint:
         response: Response = client.get("/")
         assert response.json() == []
 
-    def test_if_ads(self):
+    def test_if_ads(self, session):
         client = TestClient(app)
-        session = SessionFactory()
         session.add(CampaignStat(
             date=date(year=2017, month=5, day=17),
             channel='adcolony',
@@ -51,7 +49,6 @@ class TestRootEndpoint:
             spend=Decimal('33.3'),
             revenue=Decimal('333.3')
         ))
-        session.commit()
 
         response: Response = client.get("/")
         assert response.json() == [
