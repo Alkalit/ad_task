@@ -7,7 +7,7 @@ from database import Base
 
 @pytest.fixture(scope='session')
 def db() -> Engine:
-    engine = create_engine(":memory:")
+    engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(bind=engine)
     return engine
 
