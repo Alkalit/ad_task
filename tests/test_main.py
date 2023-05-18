@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 from sqlalchemy.orm import Session
@@ -5,6 +6,11 @@ from sqlalchemy.orm import Session
 from db_models import CampaignStat
 from decimal import Decimal
 from datetime import date
+
+
+@pytest.fixture(autouse=True)
+def session_override(app, session):
+    app.dependency_overrides[Session] = lambda: session
 
 
 class TestRootEndpoint:

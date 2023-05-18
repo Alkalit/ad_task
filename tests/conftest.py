@@ -10,7 +10,7 @@ from api import router
 
 @pytest.fixture(scope='session')
 def engine() -> Engine:
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine("sqlite:///:memory:", connect_args=dict(check_same_thread=False))
     Base.metadata.create_all(bind=engine)
     return engine
 

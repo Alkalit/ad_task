@@ -10,7 +10,7 @@ OS = NewType('OS', str)
 Money = NewType('Money', Decimal)
 
 
-class CampaignStat(BaseModel):
+class CampaignStatSchema(BaseModel):
     date: pydate
     channel: Channel
     country: Country

@@ -1,13 +1,15 @@
-from fastapi import APIRouter
-from database import SessionFactory
+from typing import Annotated
+from fastapi import APIRouter, Depends
+
+from sqlalchemy.orm import Session
 from db_models import CampaignStat
-from models import CampaignStat as CampaignStatSchema
+from models import CampaignStatSchema
+from stub import Stub
 
 router = APIRouter()
 
 
 @router.get("/")
-def root() -> list[CampaignStatSchema]:
-    session = SessionFactory()
+def root(session: Annotated[Session, Depends(Stub(Session))]) -> list[CampaignStatSchema]:
     stats = session.query(CampaignStat).all()
     return stats
