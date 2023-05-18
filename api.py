@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
 from db_models import CampaignStat
-from models import CampaignStatSchema
+from schemas import CampaignStatSchema
 from stub import Stub
 
 router = APIRouter()
