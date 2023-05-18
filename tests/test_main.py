@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from httpx import Response
+from sqlalchemy.orm import Session
 
-from main import app
 from db_models import CampaignStat
 from decimal import Decimal
 from datetime import date
@@ -9,13 +9,11 @@ from datetime import date
 
 class TestRootEndpoint:
 
-    def test_root_if_no_ads(self):
-        client = TestClient(app)
+    def test_root_if_no_ads(self, client: TestClient):
         response: Response = client.get("/")
         assert response.json() == []
 
-    def test_if_ads(self, session):
-        client = TestClient(app)
+    def test_if_ads(self, client: TestClient, session: Session):
         session.add(CampaignStat(
             date=date(year=2017, month=5, day=17),
             channel='adcolony',
@@ -49,6 +47,7 @@ class TestRootEndpoint:
             spend=Decimal('33.3'),
             revenue=Decimal('333.3')
         ))
+        session.commit()
 
         response: Response = client.get("/")
         assert response.json() == [
