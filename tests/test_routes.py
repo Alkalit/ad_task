@@ -59,11 +59,13 @@ class TestRootEndpoint:
 
     def test_root_if_no_ads(self, client: TestClient):
         response: Response = client.get("/")
+        assert response.status_code == 200
         assert response.json() == []
 
     def test_if_ads(self, client: TestClient, data_sample: tuple[CampaignStat]):
 
         response: Response = client.get("/")
+        assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "US", "os": "android", "impressions": 1000,
              "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
@@ -75,6 +77,13 @@ class TestRootEndpoint:
 
     def test_filters_date_from(self, client: TestClient, data_sample: tuple[CampaignStat]):
         response: Response = client.get("/?date_from=2001-02-01")
+        assert response.status_code == 200
+        assert response.json() == [
+            {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "ios", "impressions": 3000,
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+        ]
 
     def test_filters_date_to(self, client: TestClient, data_sample: tuple[CampaignStat]):
         response: Response = client.get("/?date_to=2001-02-01")
