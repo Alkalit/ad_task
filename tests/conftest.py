@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine, Engine, event
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi.testclient import TestClient
 
@@ -8,9 +8,29 @@ from database import Base
 from api import router
 
 
+# https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#serializable-isolation-savepoints-transactional-ddl
+def do_connect(dbapi_connection, connection_record):
+    # disable pysqlite's emitting of the BEGIN statement entirely.
+    # also stops it from emitting COMMIT before any DDL.
+    dbapi_connection.isolation_level = None
+
+
+def do_begin(conn):
+    # emit our own BEGIN
+    conn.exec_driver_sql("BEGIN")
+
+
 @pytest.fixture(scope='session')
 def engine() -> Engine:
-    engine = create_engine("sqlite:///:memory:", connect_args=dict(check_same_thread=False))
+    engine = create_engine('sqlite://',
+                           connect_args={'check_same_thread': False},
+                           echo=True,
+                           echo_pool="debug"
+                           )
+
+    event.listen(engine, "connect", do_connect)
+    event.listen(engine, "begin", do_begin)
+
     Base.metadata.create_all(bind=engine)
     return engine
 
