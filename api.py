@@ -24,6 +24,7 @@ def root(
 
     expression = select(CampaignStat)
 
+    # TODO compare date just by <>
     if date_from:
         date_from: date = datetime.strptime(date_from, '%d-%m-%Y').date()
         expression = expression.where(CampaignStat.date >= date_from)
