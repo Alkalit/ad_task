@@ -18,7 +18,7 @@ def data_sample(session: Session) -> tuple[CampaignStat]:
     stat1 = CampaignStat(
         date=date(year=2001, month=1, day=1),
         channel='adcolony',
-        country='US',
+        country='RU',
         os='android',
         impressions=1000,
         clicks=100,
@@ -41,7 +41,7 @@ def data_sample(session: Session) -> tuple[CampaignStat]:
         date=date(year=2003, month=3, day=3),
         channel='cedcolony',
         country='DE',
-        os='ios',
+        os='windows',
         impressions=3000,
         clicks=300,
         installs=30,
@@ -63,36 +63,63 @@ class TestRootEndpoint:
         assert response.json() == []
 
     def test_if_ads(self, client: TestClient, data_sample: tuple[CampaignStat]):
-
         response: Response = client.get("/")
         assert response.status_code == 200
         assert response.json() == [
-            {"date": "2001-01-01", "channel": "adcolony", "country": "US", "os": "android", "impressions": 1000,
+            {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
              "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
              "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
-            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "ios", "impressions": 3000,
+            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
              "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
         ]
 
     def test_filters_date_from(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?date_from=2001-02-01")
+        response: Response = client.get("/?date_from=01-02-2002")
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
              "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
-            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "ios", "impressions": 3000,
+            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
              "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
         ]
 
     def test_filters_date_to(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?date_to=2001-02-01")
+        response: Response = client.get("/?date_to=02-02-2002")
+        assert response.status_code == 200
+        assert response.json() == [
+            {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+            {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+        ]
 
     def test_filters_channels(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?channel=adcolony")
+        response: Response = client.get("/?channels=adcolony&channels=cedcolony")
+        assert response.status_code == 200
+        assert response.json() == [
+            {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+        ]
 
     def test_filters_countries(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?country=us")
+        response: Response = client.get("/?countries=US&countries=RU")
+        assert response.status_code == 200
+        assert response.json() == [
+            {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+            {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+        ]
 
     def test_filters_oses(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?os=android")
+        response: Response = client.get("/?os=android&os=windows")
+        assert response.status_code == 200
+        assert response.json() == [
+            {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+            {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+        ]
