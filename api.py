@@ -2,7 +2,7 @@ from typing import Annotated
 from datetime import datetime, date
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select
+from sqlalchemy import select, Column, desc, asc
 from sqlalchemy.orm import Session
 
 from db_models import CampaignStat
@@ -10,6 +10,15 @@ from schemas import CampaignStatSchema
 from stub import Stub
 
 router = APIRouter()
+
+
+# TODO validation error
+SORT_FIELDS_MAPPING: dict[str, Column] = {
+    'date': CampaignStat.date,
+    'channel': CampaignStat.channel,
+    'country': CampaignStat.country,
+    'os': CampaignStat.os,
+}
 
 
 @router.get("/")
@@ -20,6 +29,7 @@ def root(
     channels: Annotated[list[str] | None, Query()] = None,
     countries: Annotated[list[str] | None, Query()] = None,
     os: Annotated[list[str] | None, Query()] = None,
+    sort: Annotated[str| None, Query()] = None,
 ) -> list[CampaignStatSchema]:
 
     expression = select(CampaignStat)
@@ -36,6 +46,14 @@ def root(
         expression = expression.where(CampaignStat.country.in_(countries))
     if os:
         expression = expression.where(CampaignStat.os.in_(os))
+    if sort:
+        if sort.startswith('-'):
+            field = SORT_FIELDS_MAPPING.get(sort[1:])
+            direction = desc
+        else:
+            field = sort
+            direction = asc
+        expression = expression.order_by(direction(field))
 
     stats = session.scalars(expression).all()
     return stats
