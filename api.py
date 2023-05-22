@@ -11,7 +11,6 @@ from stub import Stub
 
 router = APIRouter()
 
-
 # TODO validation error
 SORT_FIELDS_MAPPING: dict[str, Column] = {
     'date': CampaignStat.date,
@@ -23,15 +22,14 @@ SORT_FIELDS_MAPPING: dict[str, Column] = {
 
 @router.get("/")
 def root(
-    session: Annotated[Session, Depends(Stub(Session))],
-    date_from: Annotated[str | None, Query()] = None,
-    date_to: Annotated[str | None, Query()] = None,
-    channels: Annotated[list[str] | None, Query()] = None,
-    countries: Annotated[list[str] | None, Query()] = None,
-    os: Annotated[list[str] | None, Query()] = None,
-    sort: Annotated[str| None, Query()] = None,
+        session: Annotated[Session, Depends(Stub(Session))],
+        date_from: Annotated[str | None, Query()] = None,
+        date_to: Annotated[str | None, Query()] = None,
+        channels: Annotated[list[str] | None, Query()] = None,
+        countries: Annotated[list[str] | None, Query()] = None,
+        os: Annotated[list[str] | None, Query()] = None,
+        sort: Annotated[str | None, Query()] = None,
 ) -> list[CampaignStatSchema]:
-
     expression = select(CampaignStat)
 
     # TODO compare date just by <>
