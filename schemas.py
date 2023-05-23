@@ -11,10 +11,10 @@ Money = NewType('Money', Decimal)
 
 
 class CampaignStatSchema(BaseModel):
-    date: pydate
-    channel: Channel
-    country: Country
-    os: OS
+    date: pydate | None
+    channel: Channel | None
+    country: Country | None
+    os: OS | None
     impressions: int
     clicks: int
     installs: int

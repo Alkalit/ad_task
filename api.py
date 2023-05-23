@@ -2,8 +2,9 @@ from typing import Annotated
 from datetime import datetime, date
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, Column, desc, asc
-from sqlalchemy.orm import Session
+from sqlalchemy import select, Column, desc, asc, func, literal
+from sqlalchemy.orm import Session, load_only, defer
+from sqlalchemy.sql.expression import null
 
 from db_models import CampaignStat
 from schemas import CampaignStatSchema
@@ -29,8 +30,36 @@ def root(
         countries: Annotated[list[str] | None, Query()] = None,
         os: Annotated[list[str] | None, Query()] = None,
         sort: Annotated[str | None, Query()] = None,
+        groupby: Annotated[list[str] | None, Query()] = None,
 ) -> list[CampaignStatSchema]:
-    expression = select(CampaignStat)
+
+    if not groupby:
+        expression = select(CampaignStat)
+    else:
+        columns = []
+        fields = dict(zip(groupby, range(len(groupby))))
+        for field in SORT_FIELDS_MAPPING:
+            if field in fields:
+                column = SORT_FIELDS_MAPPING[field]
+            else:
+                column = null().label(field)
+            columns.append(column)
+
+        expression = select(
+            func.row_number().over().label('id'),
+
+            # null().label("date"),
+            # null().label("channel"),
+            # null().label("country"),
+            # null().label("os"),
+            *columns,
+
+            func.sum(CampaignStat.impressions).label('impressions'),
+            func.sum(CampaignStat.clicks).label('clicks'),
+            func.sum(CampaignStat.installs).label('installs'),
+            func.sum(CampaignStat.spend).label('spend'),
+            func.sum(CampaignStat.revenue).label('revenue'),
+        ).group_by(*groupby)
 
     # TODO compare date just by <>
     if date_from:
@@ -54,5 +83,5 @@ def root(
             direction = asc
         expression = expression.order_by(direction(field))
 
-    stats = session.scalars(expression).all()
+    stats = session.scalars(select(CampaignStat).from_statement(expression)).all()
     return stats
