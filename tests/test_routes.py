@@ -245,7 +245,7 @@ class TestRootEndpoint:
         ]
 
     def test_sort_descending(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?sort=-country")
+        response: Response = client.get("/?sort=country&ordering=desc")
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,

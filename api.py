@@ -2,8 +2,8 @@ from typing import Annotated
 from datetime import datetime, date
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, Column, desc, asc, func, literal
-from sqlalchemy.orm import Session, load_only, defer
+from sqlalchemy import select, Column, desc, asc, func
+from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import null
 
 from db_models import CampaignStat
@@ -30,6 +30,7 @@ def root(
         countries: Annotated[list[str] | None, Query()] = None,
         os: Annotated[list[str] | None, Query()] = None,
         sort: Annotated[str | None, Query()] = None,
+        ordering: Annotated[str, Query()] = 'asc',
         groupby: Annotated[list[str] | None, Query()] = None,
 ) -> list[CampaignStatSchema]:
 
@@ -75,12 +76,11 @@ def root(
     if os:
         expression = expression.where(CampaignStat.os.in_(os))
     if sort:
-        if sort.startswith('-'):
-            field = SORT_FIELDS_MAPPING.get(sort[1:])
-            direction = desc
-        else:
-            field = sort
+        field = SORT_FIELDS_MAPPING.get(sort)
+        if ordering == 'asc':
             direction = asc
+        else:
+            direction = desc
         expression = expression.order_by(direction(field))
 
     stats = session.scalars(select(CampaignStat).from_statement(expression)).all()
