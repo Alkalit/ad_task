@@ -35,7 +35,18 @@ def root(
 ) -> list[CampaignStatSchema]:
 
     if not groupby:
-        expression = select(CampaignStat)
+        expression = select(
+            CampaignStat.id,
+            CampaignStat.date,
+            CampaignStat.channel,
+            CampaignStat.country,
+            CampaignStat.os,
+            CampaignStat.impressions,
+            CampaignStat.clicks,
+            CampaignStat.installs,
+            CampaignStat.spend,
+            CampaignStat.revenue,
+        )
     else:
         columns = []
         fields = dict(zip(groupby, range(len(groupby))))
@@ -83,5 +94,5 @@ def root(
             direction = desc
         expression = expression.order_by(direction(field))
 
-    stats = session.scalars(select(CampaignStat).from_statement(expression)).all()
+    stats = session.execute(expression).all()
     return stats
