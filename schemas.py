@@ -20,6 +20,7 @@ class CampaignStatSchema(BaseModel):
     installs: int
     spend: Money
     revenue: Money
+    cpi: Money
 
     class Config:
         orm_mode = True

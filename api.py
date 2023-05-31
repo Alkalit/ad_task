@@ -2,7 +2,7 @@ from typing import Annotated
 from datetime import datetime, date
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, Column, desc, asc, func
+from sqlalchemy import select, Column, desc, asc, func, literal
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import null
 
@@ -46,6 +46,7 @@ def root(
             CampaignStat.installs,
             CampaignStat.spend,
             CampaignStat.revenue,
+            literal(100).label('cpi'),
         )
     else:
         columns = []
