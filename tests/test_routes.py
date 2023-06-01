@@ -175,11 +175,11 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
     def test_filters_date_from(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -187,9 +187,9 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
     def test_filters_date_to(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -197,9 +197,9 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
         ]
 
     def test_filters_channels(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -207,9 +207,9 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
     def test_filters_countries(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -217,9 +217,9 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
         ]
 
     def test_filters_oses(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -227,9 +227,9 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
     def test_sort_ascending(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -237,11 +237,11 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
         ]
 
     def test_sort_descending(self, client: TestClient, data_sample: tuple[CampaignStat]):
@@ -249,11 +249,11 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2002-02-02", "channel": "betcolony", "country": "US", "os": "ios", "impressions": 2000,
-             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2},
+             "clicks": 200, "installs": 20, "spend": 22.2, "revenue": 222.2, "cpi": 1.11},
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
-             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1},
+             "clicks": 100, "installs": 10, "spend": 11.1, "revenue": 111.1, "cpi": 1.11},
             {"date": "2003-03-03", "channel": "cedcolony", "country": "DE", "os": "windows", "impressions": 3000,
-             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
     def test_group_by(self, client: TestClient, groupby_dataset):
@@ -263,11 +263,11 @@ class TestRootEndpoint:
         result.sort(key=lambda obj: obj['country'])
         assert result == [
             {"date": None, "channel": None, "country": "DE", "os": None, "impressions": 9000, "clicks": 900,
-             "installs": 90, "spend": 99.9, "revenue": 999.9},
+             "installs": 90, "spend": 99.9, "revenue": 999.9, "cpi": 1.11},
             {"date": None, "channel": None, "country": "RU", "os": None, "impressions": 3000, "clicks": 300,
-             "installs": 30, "spend": 33.3, "revenue": 333.3},
+             "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
             {"date": None, "channel": None, "country": "US", "os": None, "impressions": 6000, "clicks": 600,
-             "installs": 60, "spend": 66.6, "revenue": 666.6},
+             "installs": 60, "spend": 66.6, "revenue": 666.6, "cpi": 1.11},
         ]
 
     def test_group_by_with_filtering(self, client: TestClient, groupby_dataset):
@@ -275,5 +275,5 @@ class TestRootEndpoint:
         assert response.status_code == 200
         assert response.json() == [
             {"date": None, "channel": None, "country": "DE", "os": None, "impressions": 9000, "clicks": 900,
-             "installs": 90, "spend": 99.9, "revenue": 999.9},
+             "installs": 90, "spend": 99.9, "revenue": 999.9, "cpi": 1.11},
         ]
