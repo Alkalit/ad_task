@@ -74,13 +74,12 @@ def root(
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         ).group_by(*groupby)
 
-    # TODO compare date just by <>
     if date_from:
         date_from: date = datetime.strptime(date_from, '%d-%m-%Y').date()
         expression = expression.where(CampaignStat.date >= date_from)
     if date_to:
         date_to: date = datetime.strptime(date_to, '%d-%m-%Y').date()
-        expression = expression.where(CampaignStat.date <= date_to)
+        expression = expression.where(CampaignStat.date < date_to)
     if channels:
         expression = expression.where(CampaignStat.channel.in_(channels))
     if countries:

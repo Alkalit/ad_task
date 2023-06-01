@@ -193,7 +193,7 @@ class TestRootEndpoint:
         ]
 
     def test_filters_date_to(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?date_to=02-02-2002")
+        response: Response = client.get("/?date_to=03-03-2002")
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,
