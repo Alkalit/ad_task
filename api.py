@@ -36,7 +36,6 @@ def root(
 
     if not groupby:
         expression = select(
-            CampaignStat.id,
             CampaignStat.date,
             CampaignStat.channel,
             CampaignStat.country,
@@ -46,7 +45,7 @@ def root(
             CampaignStat.installs,
             CampaignStat.spend,
             CampaignStat.revenue,
-            literal(100).label('cpi'),
+            (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         )
     else:
         columns = []
@@ -59,7 +58,7 @@ def root(
             columns.append(column)
 
         expression = select(
-            func.row_number().over().label('id'),
+            # func.row_number().over().label('id'),
 
             # null().label("date"),
             # null().label("channel"),
@@ -72,6 +71,7 @@ def root(
             func.sum(CampaignStat.installs).label('installs'),
             func.sum(CampaignStat.spend).label('spend'),
             func.sum(CampaignStat.revenue).label('revenue'),
+            (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         ).group_by(*groupby)
 
     # TODO compare date just by <>
