@@ -2,6 +2,7 @@ from typing import Annotated
 from datetime import datetime, date
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 from sqlalchemy import select, Column, desc, asc, func, literal
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import null
@@ -21,20 +22,23 @@ SORT_FIELDS_MAPPING: dict[str, Column] = {
 }
 
 
+class StatParams(BaseModel):
+    date_from: str | None = Field(Query(None))
+    date_to: str | None = Field(Query(None))
+    channels: list[str] | None = Field(Query(None))
+    countries: list[str] | None = Field(Query(None))
+    os: list[str] | None = Field(Query(None))
+    sort: str | None = Field(Query(None))
+    ordering: str = Field(Query('asc'))
+    groupby: list[str] | None = Field(Query(None))
+
+
 @router.get("/")
 def root(
         session: Annotated[Session, Depends(Stub(Session))],
-        date_from: Annotated[str | None, Query()] = None,
-        date_to: Annotated[str | None, Query()] = None,
-        channels: Annotated[list[str] | None, Query()] = None,
-        countries: Annotated[list[str] | None, Query()] = None,
-        os: Annotated[list[str] | None, Query()] = None,
-        sort: Annotated[str | None, Query()] = None,
-        ordering: Annotated[str, Query()] = 'asc',
-        groupby: Annotated[list[str] | None, Query()] = None,
+        params: StatParams = Depends(),
 ) -> list[CampaignStatSchema]:
-
-    if not groupby:
+    if not params.groupby:
         expression = select(
             CampaignStat.date,
             CampaignStat.channel,
@@ -49,7 +53,7 @@ def root(
         )
     else:
         columns = []
-        fields = dict(zip(groupby, range(len(groupby))))
+        fields = dict(zip(params.groupby, range(len(params.groupby))))
         for field in SORT_FIELDS_MAPPING:
             if field in fields:
                 column = SORT_FIELDS_MAPPING[field]
@@ -72,23 +76,23 @@ def root(
             func.sum(CampaignStat.spend).label('spend'),
             func.sum(CampaignStat.revenue).label('revenue'),
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
-        ).group_by(*groupby)
+        ).group_by(*params.groupby)
 
-    if date_from:
-        date_from: date = datetime.strptime(date_from, '%d-%m-%Y').date()
+    if params.date_from:
+        date_from: date = datetime.strptime(params.date_from, '%d-%m-%Y').date()
         expression = expression.where(CampaignStat.date >= date_from)
-    if date_to:
-        date_to: date = datetime.strptime(date_to, '%d-%m-%Y').date()
+    if params.date_to:
+        date_to: date = datetime.strptime(params.date_to, '%d-%m-%Y').date()
         expression = expression.where(CampaignStat.date < date_to)
-    if channels:
-        expression = expression.where(CampaignStat.channel.in_(channels))
-    if countries:
-        expression = expression.where(CampaignStat.country.in_(countries))
-    if os:
-        expression = expression.where(CampaignStat.os.in_(os))
-    if sort:
-        field = SORT_FIELDS_MAPPING.get(sort)
-        if ordering == 'asc':
+    if params.channels:
+        expression = expression.where(CampaignStat.channel.in_(params.channels))
+    if params.countries:
+        expression = expression.where(CampaignStat.country.in_(params.countries))
+    if params.os:
+        expression = expression.where(CampaignStat.os.in_(params.os))
+    if params.sort:
+        field = SORT_FIELDS_MAPPING.get(params.sort)
+        if params.ordering == 'asc':
             direction = asc
         else:
             direction = desc
