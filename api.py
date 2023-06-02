@@ -1,14 +1,13 @@
 from typing import Annotated
 from datetime import datetime, date
-from enum import Enum
 
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel, Field
-from sqlalchemy import select, Column, desc, asc, func, literal
+from fastapi import APIRouter, Depends
+from sqlalchemy import select, Column, desc, asc, func
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import null
 
 from db_models import CampaignStat
+from models import StatParams, StatOrdering
 from schemas import CampaignStatSchema
 from stub import Stub
 
@@ -21,41 +20,6 @@ SORT_FIELDS_MAPPING: dict[str, Column] = {
     'country': CampaignStat.country,
     'os': CampaignStat.os,
 }
-
-
-class StatSortableFields(str, Enum):
-    date = 'date'
-    channel = 'channel'
-    country = 'country'
-    os = 'os'
-    impressions = 'impressions'
-    clicks = 'clicks'
-    installs = 'installs'
-    spend = 'spend'
-    revernue = 'revenue'
-
-
-class StatOrdering(str, Enum):
-    asc = 'asc'
-    desc = 'desc'
-
-
-class GroupbyFields(str, Enum):
-    date = 'date'
-    channel = 'channel'
-    country = 'country'
-    os = 'os'
-
-
-class StatParams(BaseModel):
-    date_from: str | None = Field(Query(None))
-    date_to: str | None = Field(Query(None))
-    channels: list[str] | None = Field(Query(None))
-    countries: list[str] | None = Field(Query(None))
-    os: list[str] | None = Field(Query(None))
-    sort: StatSortableFields | None = Field(Query(None))
-    groupby: list[GroupbyFields] | None = Field(Query(None))
-    ordering: StatOrdering = Field(Query(StatOrdering.asc))
 
 
 @router.get("/")
