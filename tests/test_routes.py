@@ -223,7 +223,7 @@ class TestRootEndpoint:
         ]
 
     def test_filters_oses(self, client: TestClient, data_sample: tuple[CampaignStat]):
-        response: Response = client.get("/?os=android&os=windows&ordering=left")
+        response: Response = client.get("/?os=android&os=windows")
         assert response.status_code == 200
         assert response.json() == [
             {"date": "2001-01-01", "channel": "adcolony", "country": "RU", "os": "android", "impressions": 1000,

@@ -1,5 +1,6 @@
 from typing import Annotated
 from datetime import datetime, date
+from enum import Enum
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
@@ -22,15 +23,39 @@ SORT_FIELDS_MAPPING: dict[str, Column] = {
 }
 
 
+class StatSortableFields(str, Enum):
+    date = 'date'
+    channel = 'channel'
+    country = 'country'
+    os = 'os'
+    impressions = 'impressions'
+    clicks = 'clicks'
+    installs = 'installs'
+    spend = 'spend'
+    revernue = 'revenue'
+
+
+class StatOrdering(str, Enum):
+    asc = 'asc'
+    desc = 'desc'
+
+
+class GroupbyFields(str, Enum):
+    date = 'date'
+    channel = 'channel'
+    country = 'country'
+    os = 'os'
+
+
 class StatParams(BaseModel):
     date_from: str | None = Field(Query(None))
     date_to: str | None = Field(Query(None))
     channels: list[str] | None = Field(Query(None))
     countries: list[str] | None = Field(Query(None))
     os: list[str] | None = Field(Query(None))
-    sort: str | None = Field(Query(None))
-    ordering: str = Field(Query('asc'))
-    groupby: list[str] | None = Field(Query(None))
+    sort: StatSortableFields | None = Field(Query(None))
+    groupby: list[GroupbyFields] | None = Field(Query(None))
+    ordering: StatOrdering = Field(Query(StatOrdering.asc))
 
 
 @router.get("/")
@@ -92,7 +117,7 @@ def root(
         expression = expression.where(CampaignStat.os.in_(params.os))
     if params.sort:
         field = SORT_FIELDS_MAPPING.get(params.sort)
-        if params.ordering == 'asc':
+        if params.ordering == StatOrdering.asc:
             direction = asc
         else:
             direction = desc
