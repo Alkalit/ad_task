@@ -1,7 +1,5 @@
-from abc import ABC
 from collections.abc import Callable
 from typing import Sequence, TypeVar
-from datetime import date, datetime
 
 from sqlalchemy import select, null, func, asc, desc, Column, Row
 from sqlalchemy.orm import Session
@@ -10,8 +8,6 @@ from pydantic import BaseModel
 from db_models import CampaignStat
 from models import StatOrdering, StatParams, GroupbyFields
 
-C = TypeVar('C', bound=Callable)
-
 
 class Service(Callable):
 
@@ -19,11 +15,7 @@ class Service(Callable):
         ...
 
 
-class BaseAnalyticsService(ABC, Service):
-    ...
-
-
-class AnalyticsService(BaseAnalyticsService):
+class AnalyticsService(Service):
     FIELDS_MAPPING: dict[str, Column] = {
         'date': CampaignStat.date,
         'channel': CampaignStat.channel,
