@@ -1,7 +1,6 @@
 from abc import ABC
 from collections.abc import Callable
 from typing import Sequence, TypeVar
-from datetime import date, datetime
 
 from sqlalchemy import select, null, func, asc, desc, Column, Row
 from sqlalchemy.orm import Session
