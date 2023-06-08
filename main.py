@@ -3,14 +3,11 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session
 
 from api import router
-from database import Base, engine, SessionFactory
+from database import Base, setup_engine, setup_session
 
 
-def setup_fastapi() -> FastAPI:
-    app = FastAPI()
+def setup_app(app: FastAPI) -> None:
     app.include_router(router)
-    app.dependency_overrides[Session] = lambda: SessionFactory()
-    return app
 
 
 def run_server(app: FastAPI) -> None:
@@ -19,9 +16,21 @@ def run_server(app: FastAPI) -> None:
     server.run()
 
 
+def setup_api() -> FastAPI:
+    app = FastAPI()
+    setup_app(app)
+
+    return app
+
+
 def main() -> None:
+    engine = setup_engine()
+    session_factory = setup_session(engine)
     Base.metadata.create_all(bind=engine)
-    app = setup_fastapi()
+
+    app = setup_api(session_factory)
+    app.dependency_overrides[Session] = lambda: session_factory()
+
     return run_server(app)
 
 
