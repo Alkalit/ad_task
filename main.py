@@ -1,18 +1,13 @@
 from fastapi import FastAPI
-from database import Base, engine, SessionFactory
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine, Engine
-
-from services import AnalyticsService, BaseAnalyticsService
+from sqlalchemy.orm import Session
 
 from api import router
+from database import Base, engine, SessionFactory
 
 
 def setup_fastapi() -> FastAPI:
     app = FastAPI()
     app.include_router(router)
-    service = AnalyticsService()
-    app.dependency_overrides[BaseAnalyticsService] = lambda: service
     return app
 
 app = setup_fastapi()
