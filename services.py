@@ -46,21 +46,23 @@ class AnalyticsService(BaseAnalyticsService):
                 (CampaignStat.spend / CampaignStat.installs).label('cpi'),
             )
         else:
-            columns = []
+            columns_with_nulls: list[Column] = []
+            columns: list[Column] = []
             fields: dict[GroupbyFields, int] = dict(zip(params.groupby, range(len(params.groupby))))
             for field in self.FIELDS_MAPPING:
                 if field in fields:
                     column = self.FIELDS_MAPPING[field]
+                    columns.append(column)
                 else:
                     column = null().label(field)
-                columns.append(column)
+                columns_with_nulls.append(column)
 
             expression = select(
                 # null().label("date"),
                 # null().label("channel"),
                 # null().label("country"),
                 # null().label("os"),
-                *columns,
+                *columns_with_nulls,
 
                 func.sum(CampaignStat.impressions).label('impressions'),
                 func.sum(CampaignStat.clicks).label('clicks'),
@@ -68,7 +70,7 @@ class AnalyticsService(BaseAnalyticsService):
                 func.sum(CampaignStat.spend).label('spend'),
                 func.sum(CampaignStat.revenue).label('revenue'),
                 (CampaignStat.spend / CampaignStat.installs).label('cpi'),
-            ).group_by(*params.groupby)
+            ).group_by(*columns)
 
         if params.date_from:
             date_from: date = datetime.strptime(params.date_from, '%d-%m-%Y').date()
