@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from db_models import CampaignStat
-from models import StatOrdering, StatParams
+from models import StatOrdering, StatParams, GroupbyFields
 
 C = TypeVar('C', bound=Callable)
 
@@ -24,7 +24,7 @@ class BaseAnalyticsService(ABC, Service):
 
 
 class AnalyticsService(BaseAnalyticsService):
-    SORT_FIELDS_MAPPING: dict[str, Column] = {
+    FIELDS_MAPPING: dict[str, Column] = {
         'date': CampaignStat.date,
         'channel': CampaignStat.channel,
         'country': CampaignStat.country,
@@ -47,17 +47,15 @@ class AnalyticsService(BaseAnalyticsService):
             )
         else:
             columns = []
-            fields = dict(zip(params.groupby, range(len(params.groupby))))
-            for field in self.SORT_FIELDS_MAPPING:
+            fields: dict[GroupbyFields, int] = dict(zip(params.groupby, range(len(params.groupby))))
+            for field in self.FIELDS_MAPPING:
                 if field in fields:
-                    column = self.SORT_FIELDS_MAPPING[field]
+                    column = self.FIELDS_MAPPING[field]
                 else:
                     column = null().label(field)
                 columns.append(column)
 
             expression = select(
-                # func.row_number().over().label('id'),
-
                 # null().label("date"),
                 # null().label("channel"),
                 # null().label("country"),
@@ -71,6 +69,7 @@ class AnalyticsService(BaseAnalyticsService):
                 func.sum(CampaignStat.revenue).label('revenue'),
                 (CampaignStat.spend / CampaignStat.installs).label('cpi'),
             ).group_by(*params.groupby)
+
         if params.date_from:
             date_from: date = datetime.strptime(params.date_from, '%d-%m-%Y').date()
             expression = expression.where(CampaignStat.date >= date_from)
@@ -84,7 +83,7 @@ class AnalyticsService(BaseAnalyticsService):
         if params.os:
             expression = expression.where(CampaignStat.os.in_(params.os))
         if params.sort:
-            field = self.SORT_FIELDS_MAPPING.get(params.sort)
+            field = self.FIELDS_MAPPING.get(params.sort)
             if params.ordering == StatOrdering.asc:
                 direction = asc
             else:
