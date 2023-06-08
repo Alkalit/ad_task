@@ -64,11 +64,11 @@ class AnalyticsService(BaseAnalyticsService):
                 # null().label("os"),
                 *columns_with_nulls,
 
-                func.sum(CampaignStat.impressions).label('impressions'),
-                func.sum(CampaignStat.clicks).label('clicks'),
-                func.sum(CampaignStat.installs).label('installs'),
-                func.sum(CampaignStat.spend).label('spend'),
-                func.sum(CampaignStat.revenue).label('revenue'),
+                func.sum(CampaignStat.impressions).label(CampaignStat.impressions.name),
+                func.sum(CampaignStat.clicks).label(CampaignStat.clicks.name),
+                func.sum(CampaignStat.installs).label(CampaignStat.installs.name),
+                func.sum(CampaignStat.spend).label(CampaignStat.spend.name),
+                func.sum(CampaignStat.revenue).label(CampaignStat.revenue.name),
                 (CampaignStat.spend / CampaignStat.installs).label('cpi'),
             ).group_by(*columns)
 
