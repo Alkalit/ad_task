@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from database import Base
 from api import router
+from services import BaseAnalyticsService, AnalyticsService
 
 
 # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#serializable-isolation-savepoints-transactional-ddl
@@ -39,6 +40,8 @@ def engine() -> Engine:
 def app() -> FastAPI:
     test_app = FastAPI()
     test_app.include_router(router)
+    service = AnalyticsService()
+    test_app.dependency_overrides[BaseAnalyticsService] = lambda: service
     return test_app
 
 
