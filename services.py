@@ -73,11 +73,9 @@ class AnalyticsService(BaseAnalyticsService):
             ).group_by(*columns)
 
         if params.date_from:
-            date_from: date = datetime.strptime(params.date_from, '%d-%m-%Y').date()
-            expression = expression.where(CampaignStat.date >= date_from)
+            expression = expression.where(CampaignStat.date >= params.date_from)
         if params.date_to:
-            date_to: date = datetime.strptime(params.date_to, '%d-%m-%Y').date()
-            expression = expression.where(CampaignStat.date < date_to)
+            expression = expression.where(CampaignStat.date < params.date_to)
         if params.channels:
             expression = expression.where(CampaignStat.channel.in_(params.channels))
         if params.countries:

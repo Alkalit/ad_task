@@ -2,6 +2,7 @@ from enum import Enum
 
 from fastapi import Query
 from pydantic import BaseModel, Field
+from datetime import date
 
 
 class GroupbyFields(str, Enum):
@@ -29,8 +30,8 @@ class StatSortableFields(str, Enum):
 
 
 class StatParams(BaseModel):
-    date_from: str | None = Field(Query(None))
-    date_to: str | None = Field(Query(None))
+    date_from: date | None = Field(Query(None))
+    date_to: date | None = Field(Query(None))
     channels: list[str] | None = Field(Query(None))
     countries: list[str] | None = Field(Query(None))
     os: list[str] | None = Field(Query(None))
