@@ -11,11 +11,14 @@ from stub import Stub
 router = APIRouter()
 
 
+def get_service(session: Annotated[Session, Depends(Stub(Session))]) -> AnalyticsService:
+    return AnalyticsService(session)
+
+
 @router.get("/")
 def root(
-        session: Annotated[Session, Depends(Stub(Session))],
         params: Annotated[StatParams, Depends()],
-        service: Annotated[AnalyticsService, Depends()],
+        service: Annotated[AnalyticsService, Depends(get_service)],
 ) -> list[CampaignStatSchema]:
-    stats = service(session, params)
+    stats = service(params)
     return stats

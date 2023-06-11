@@ -12,7 +12,10 @@ from specifications import StatisticSpecification, GroupBySpecification
 
 class Service(Callable):
 
-    def __call__(self, session: Session, params: BaseModel):
+    def __init__(self, session: Session):
+        self._session = session
+
+    def __call__(self, params: BaseModel):
         ...
 
 
@@ -24,7 +27,7 @@ class AnalyticsService(Service):
         'os': CampaignStat.os,
     }
 
-    def __call__(self, session: Session, params: StatParams) -> Sequence[Row]:
+    def __call__(self, params: StatParams) -> Sequence[Row]:
         if params.groupby:
             specification = GroupBySpecification(
                 date_from=params.date_from,
@@ -52,6 +55,5 @@ class AnalyticsService(Service):
             else:
                 direction = desc
             expression = expression.order_by(direction(field))
-        # CompositeSpecification.execute()
-        stats = session.execute(expression).all()
+        stats = self._session.execute(expression).all()
         return stats
