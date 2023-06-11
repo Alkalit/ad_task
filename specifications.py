@@ -1,13 +1,19 @@
 from dataclasses import dataclass
+from collections.abc import Callable
 from datetime import date
-from sqlalchemy import select, Select, null, func, asc, desc, Column, Row
+from sqlalchemy import select, Select, null, func, Column
 
 from db_models import CampaignStat
 from models import GroupbyFields
 
 
+class BaseSpecification(Callable):
+    def __call__(self) -> Select:
+        ...
+
+
 @dataclass
-class StatisticSpecification:
+class StatisticSpecification(BaseSpecification):
     date_from: date | None
     date_to: date | None
     channels: list[str] | None
@@ -50,7 +56,7 @@ FIELDS_MAPPING: dict[str, Column] = {
 
 
 @dataclass
-class GroupBySpecificatioin:
+class GroupBySpecification(BaseSpecification):
     date_from: date | None
     date_to: date | None
     channels: list[str] | None
