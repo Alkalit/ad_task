@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Protocol
 
 from sqlalchemy import select, Select, null, func, asc, desc, Column, Row
 from sqlalchemy.orm import Session
@@ -8,11 +8,24 @@ from db_models import CampaignStat
 from models import StatOrdering, GroupbyFields
 
 
-class BaseRepository:
-    ...
+class ICampaignStatisticsRepository(Protocol):
+
+    def select_campaign_analytical_stats(self,
+                                         spec: StatisticSpecification,
+                                         sort: str | None = None,
+                                         ordering: str | None = None,
+                                         ) -> Sequence[Row]:
+        ...
+
+    def select_campaign_stats(self,
+                              spec: StatisticSpecification,
+                              sort: str | None = None,
+                              ordering: str | None = None,
+                              ) -> Sequence[Row]:
+        ...
 
 
-class CampaignStatisticsRepository(BaseRepository):
+class CampaignStatisticsRepository:
 
     FIELDS_MAPPING: dict[str, Column] = {
         'date': CampaignStat.date,
