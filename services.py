@@ -7,7 +7,8 @@ from pydantic import BaseModel
 
 from db_models import CampaignStat
 from models import StatOrdering, StatParams
-from specifications import StatisticSpecification, GroupBySpecification
+from specifications import StatisticSpecification
+from repositories import CampaignStatisticsRepository
 
 
 class Service(Callable):
@@ -28,25 +29,23 @@ class AnalyticsService(Service):
     }
 
     def __call__(self, params: StatParams) -> Sequence[Row]:
-        if params.groupby:
-            specification = GroupBySpecification(
-                date_from=params.date_from,
-                date_to=params.date_to,
-                channels=params.channels,
-                countries=params.countries,
-                os=params.os,
-                groupby=params.groupby,
-            )
-        else:
-            specification = StatisticSpecification(
-                date_from=params.date_from,
-                date_to=params.date_to,
-                channels=params.channels,
-                countries=params.countries,
-                os=params.os,
-            )
+        spec = StatisticSpecification(
+            date_from=params.date_from,
+            date_to=params.date_to,
+            channels=params.channels,
+            countries=params.countries,
+            os=params.os,
+            groupby=params.groupby,
+        )
 
-        expression = specification()
+        repo = CampaignStatisticsRepository(self._session)
+
+        if params.groupby:
+            expression = repo.select_campaign_analytical_stats(spec)
+        else:
+            expression = repo.select_campaign_stats(spec)
+
+        # expression = specification()
 
         if params.sort:
             field = self.FIELDS_MAPPING.get(params.sort)
