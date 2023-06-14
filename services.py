@@ -28,6 +28,7 @@ class AnalyticsService(Service):
         'os': CampaignStat.os,
     }
 
+    # TODO hybrid properties
     def __call__(self, params: StatParams) -> Sequence[Row]:
         spec = StatisticSpecification(
             date_from=params.date_from,

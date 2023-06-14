@@ -1,12 +1,10 @@
-from datetime import date
 from typing import Sequence
 
-from sqlalchemy import select, Select, null, func, Column, asc, desc, Column, Row
+from sqlalchemy import select, Select, null, func, asc, desc, Column, Row
 from sqlalchemy.orm import Session
 from specifications import StatisticSpecification
 
 from db_models import CampaignStat
-from models import GroupbyFields
 from models import StatOrdering, GroupbyFields
 
 
@@ -25,6 +23,34 @@ class CampaignStatisticsRepository(BaseRepository):
 
     def __init__(self, session: Session):
         self._session = session
+
+    def _setup_common(self,
+                      expression: Select,
+                      spec: StatisticSpecification,
+                      sort: str | None = None,
+                      ordering: str | None = None,
+                      ) -> Select:
+
+        if spec.date_from:
+            expression = expression.where(CampaignStat.date >= spec.date_from)
+        if spec.date_to:
+            expression = expression.where(CampaignStat.date < spec.date_to)
+        if spec.channels:
+            expression = expression.where(CampaignStat.channel.in_(spec.channels))
+        if spec.countries:
+            expression = expression.where(CampaignStat.country.in_(spec.countries))
+        if spec.os:
+            expression = expression.where(CampaignStat.os.in_(spec.os))
+
+        if sort:
+            field = self.FIELDS_MAPPING.get(sort)
+            if ordering == StatOrdering.asc:
+                direction = asc
+            else:
+                direction = desc
+            expression = expression.order_by(direction(field))
+
+        return expression
 
     def select_campaign_stats(self,
                               spec: StatisticSpecification,
@@ -45,24 +71,7 @@ class CampaignStatisticsRepository(BaseRepository):
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         )
 
-        if spec.date_from:
-            expression = expression.where(CampaignStat.date >= spec.date_from)
-        if spec.date_to:
-            expression = expression.where(CampaignStat.date < spec.date_to)
-        if spec.channels:
-            expression = expression.where(CampaignStat.channel.in_(spec.channels))
-        if spec.countries:
-            expression = expression.where(CampaignStat.country.in_(spec.countries))
-        if spec.os:
-            expression = expression.where(CampaignStat.os.in_(spec.os))
-
-        if sort:
-            field = self.FIELDS_MAPPING.get(sort)
-            if ordering == StatOrdering.asc:
-                direction = asc
-            else:
-                direction = desc
-            expression = expression.order_by(direction(field))
+        expression = self._setup_common(expression, spec, sort, ordering)
 
         stats = self._session.execute(expression).all()
         return stats
@@ -100,24 +109,7 @@ class CampaignStatisticsRepository(BaseRepository):
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         ).group_by(*columns)
 
-        if spec.date_from:
-            expression = expression.where(CampaignStat.date >= spec.date_from)
-        if spec.date_to:
-            expression = expression.where(CampaignStat.date < spec.date_to)
-        if spec.channels:
-            expression = expression.where(CampaignStat.channel.in_(spec.channels))
-        if spec.countries:
-            expression = expression.where(CampaignStat.country.in_(spec.countries))
-        if spec.os:
-            expression = expression.where(CampaignStat.os.in_(spec.os))
-
-        if sort:
-            field = self.FIELDS_MAPPING.get(sort)
-            if ordering == StatOrdering.asc:
-                direction = asc
-            else:
-                direction = desc
-            expression = expression.order_by(direction(field))
+        expression = self._setup_common(expression, spec, sort, ordering)
 
         stats = self._session.execute(expression).all()
         return stats
