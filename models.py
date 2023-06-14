@@ -26,7 +26,7 @@ class StatSortableFields(str, Enum):
     clicks = 'clicks'
     installs = 'installs'
     spend = 'spend'
-    revernue = 'revenue'
+    revenue = 'revenue'
 
 
 class StatParams(BaseModel):
