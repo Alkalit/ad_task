@@ -38,21 +38,12 @@ class AnalyticsService(Service):
             groupby=params.groupby,
         )
 
+        # TODO DI into the service
         repo = CampaignStatisticsRepository(self._session)
 
         if params.groupby:
-            expression = repo.select_campaign_analytical_stats(spec)
+            stats = repo.select_campaign_analytical_stats(spec, params.sort, params.ordering)
         else:
-            expression = repo.select_campaign_stats(spec)
+            stats = repo.select_campaign_stats(spec, params.sort, params.ordering)
 
-        # expression = specification()
-
-        if params.sort:
-            field = self.FIELDS_MAPPING.get(params.sort)
-            if params.ordering == StatOrdering.asc:
-                direction = asc
-            else:
-                direction = desc
-            expression = expression.order_by(direction(field))
-        stats = self._session.execute(expression).all()
         return stats

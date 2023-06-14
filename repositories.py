@@ -7,10 +7,11 @@ from specifications import StatisticSpecification
 
 from db_models import CampaignStat
 from models import GroupbyFields
+from models import StatOrdering, GroupbyFields
 
 
 class BaseRepository:
-    pass
+    ...
 
 
 class CampaignStatisticsRepository(BaseRepository):
@@ -25,7 +26,11 @@ class CampaignStatisticsRepository(BaseRepository):
     def __init__(self, session: Session):
         self._session = session
 
-    def select_campaign_stats(self, spec: StatisticSpecification) -> Sequence[Row]:
+    def select_campaign_stats(self,
+                              spec: StatisticSpecification,
+                              sort: str | None = None,
+                              ordering: str | None = None,
+                              ) -> Sequence[Row]:
 
         expression = select(
             CampaignStat.date,
@@ -50,9 +55,23 @@ class CampaignStatisticsRepository(BaseRepository):
             expression = expression.where(CampaignStat.country.in_(spec.countries))
         if spec.os:
             expression = expression.where(CampaignStat.os.in_(spec.os))
-        return expression
 
-    def select_campaign_analytical_stats(self, spec: StatisticSpecification):
+        if sort:
+            field = self.FIELDS_MAPPING.get(sort)
+            if ordering == StatOrdering.asc:
+                direction = asc
+            else:
+                direction = desc
+            expression = expression.order_by(direction(field))
+
+        stats = self._session.execute(expression).all()
+        return stats
+
+    def select_campaign_analytical_stats(self,
+                                         spec: StatisticSpecification,
+                                         sort: str | None = None,
+                                         ordering: str | None = None,
+                                         ) -> Sequence[Row]:
 
         columns_with_nulls: list[Column] = []
         columns: list[Column] = []
@@ -91,4 +110,14 @@ class CampaignStatisticsRepository(BaseRepository):
             expression = expression.where(CampaignStat.country.in_(spec.countries))
         if spec.os:
             expression = expression.where(CampaignStat.os.in_(spec.os))
-        return expression
+
+        if sort:
+            field = self.FIELDS_MAPPING.get(sort)
+            if ordering == StatOrdering.asc:
+                direction = asc
+            else:
+                direction = desc
+            expression = expression.order_by(direction(field))
+
+        stats = self._session.execute(expression).all()
+        return stats
