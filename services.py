@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
+from db_models import ColumnName
 from models import StatParams
 from specifications import StatisticSpecification
 from gateways import ICampaignStatisticsGateway, CampaignStatsDTO
@@ -28,8 +29,7 @@ class AnalyticsService(Service):
         )
 
         if params.groupby:
-
-            align_columns: list[str] = ['date', 'channel', 'country', 'os']
+            align_columns: list[ColumnName] = ['date', 'channel', 'country', 'os']
             stats = self.campaign_gateway.select_campaign_analytical_stats(
                 spec,
                 params.groupby,

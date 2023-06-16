@@ -12,7 +12,7 @@ from stub import Stub
 router = APIRouter()
 
 
-def get_campaign_gateway(session: Annotated[Session, Depends(Stub(Session))]) -> ICampaignStatisticsGateway:
+def get_campaign_gateway(session: Annotated[Session, Depends(Stub(Session))]) -> CampaignStatisticsGateway:
     return CampaignStatisticsGateway(session)
 
 

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
+from db_models import ColumnName
 
 
 class BaseSpecification:
@@ -10,6 +11,6 @@ class BaseSpecification:
 class StatisticSpecification(BaseSpecification):
     date_from: date | None
     date_to: date | None
-    channels: list[str] | None
-    countries: list[str] | None
-    os: list[str] | None
+    channels: list[ColumnName] | None
+    countries: list[ColumnName] | None
+    os: list[ColumnName] | None
