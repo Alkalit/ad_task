@@ -4,12 +4,12 @@ from decimal import Decimal
 
 from pydantic import BaseModel, parse_obj_as
 
-from sqlalchemy import select, Select, null, func, asc, desc, Column, Row, ColumnElement
-from sqlalchemy.orm import Session
+from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
+from sqlalchemy.orm import Session, Mapper
 from specifications import StatisticSpecification
 
 from db_models import CampaignStat
-from models import StatOrdering, GroupbyFields
+from models import StatOrdering
 
 
 CampaignStatId = NewType('CampaignStatId', int)
@@ -42,25 +42,18 @@ class ICampaignStatisticsGateway(Protocol):
                                          spec: StatisticSpecification,
                                          sort: str | None = None,
                                          ordering: str | None = None,
-                                         ) -> Sequence[Row]:
+                                         ) -> list[BaseModel]:
         ...
 
     def select_campaign_stats(self,
                               spec: StatisticSpecification,
                               sort: str | None = None,
                               ordering: str | None = None,
-                              ) -> Sequence[Row]:
+                              ) -> list[BaseModel]:
         ...
 
 
 class CampaignStatisticsGateway:
-
-    FIELDS_MAPPING: dict[str, Column] = {
-        'date': CampaignStat.date,
-        'channel': CampaignStat.channel,
-        'country': CampaignStat.country,
-        'os': CampaignStat.os,
-    }
 
     def __init__(self, session: Session):
         self._session = session
@@ -90,7 +83,8 @@ class CampaignStatisticsGateway:
             expression = expression.where(CampaignStat.os.in_(spec.os))
 
         if sort:
-            field = self.FIELDS_MAPPING.get(sort)
+            mapper: Mapper = inspect(CampaignStat)
+            field = mapper.columns[sort]
             if ordering == StatOrdering.asc:
                 direction = asc
             else:
@@ -131,14 +125,15 @@ class CampaignStatisticsGateway:
         stats = self._execute(expression)
         return stats
 
-    def _get_groupbys(self, groupby_fields: list[str]) -> tuple[list[Column], list[Column]]:
+    def _get_groupbys(self, groupbys: list[str], align_columns: list[str]) -> tuple[list[Column], list[Column]]:
         columns_with_nulls: list[Column] = []
         groupby_columns: list[Column] = []
-        fields: dict[GroupbyFields, int] = dict(zip(groupby_fields, range(len(groupby_fields))))
+        fields: dict[str, int] = dict(zip(groupbys, range(len(groupbys))))
+        mapper: Mapper = inspect(CampaignStat)
 
-        for field in self.FIELDS_MAPPING:
+        for field in align_columns:
             if field in fields:
-                column = self.FIELDS_MAPPING[field]
+                column = mapper.columns[field]
                 groupby_columns.append(column)
             else:
                 column = null().label(field)
@@ -148,11 +143,13 @@ class CampaignStatisticsGateway:
 
     def select_campaign_analytical_stats(self,
                                          spec: StatisticSpecification,
+                                         groupbys: list[str],
+                                         align_columns: list[str],
                                          sort: str | None = None,
-                                         ordering: str | None = None,
+                                         ordering: StatOrdering | None = None,
                                          ) -> list[CampaignStatsDTO]:
 
-        columns_with_nulls, groupby_columns = self._get_groupbys(spec.groupby)
+        columns_with_nulls, groupby_columns = self._get_groupbys(groupbys, align_columns)
 
         expression = self._setup_select_clause(
             *columns_with_nulls,

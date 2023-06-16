@@ -13,4 +13,3 @@ class StatisticSpecification(BaseSpecification):
     channels: list[str] | None
     countries: list[str] | None
     os: list[str] | None
-    groupby: list[str] | None
