@@ -131,15 +131,10 @@ class CampaignStatisticsGateway:
         stats = self._execute(expression)
         return stats
 
-    def select_campaign_analytical_stats(self,
-                                         spec: StatisticSpecification,
-                                         sort: str | None = None,
-                                         ordering: str | None = None,
-                                         ) -> list[CampaignStatsDTO]:
-
+    def _get_groupbys(self, groupby_fields: list[str]) -> tuple[list[Column], list[Column]]:
         columns_with_nulls: list[Column] = []
         groupby_columns: list[Column] = []
-        fields: dict[GroupbyFields, int] = dict(zip(spec.groupby, range(len(spec.groupby))))
+        fields: dict[GroupbyFields, int] = dict(zip(groupby_fields, range(len(groupby_fields))))
 
         for field in self.FIELDS_MAPPING:
             if field in fields:
@@ -148,6 +143,16 @@ class CampaignStatisticsGateway:
             else:
                 column = null().label(field)
             columns_with_nulls.append(column)
+
+        return columns_with_nulls, groupby_columns
+
+    def select_campaign_analytical_stats(self,
+                                         spec: StatisticSpecification,
+                                         sort: str | None = None,
+                                         ordering: str | None = None,
+                                         ) -> list[CampaignStatsDTO]:
+
+        columns_with_nulls, groupby_columns = self._get_groupbys(spec.groupby)
 
         expression = self._setup_select_clause(
             *columns_with_nulls,
