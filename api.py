@@ -6,20 +6,20 @@ from sqlalchemy.orm import Session
 from models import StatParams
 from schemas import CampaignStatSchema
 from services import AnalyticsService
-from repositories import ICampaignStatisticsRepository, CampaignStatisticsRepository
+from gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
 from stub import Stub
 
 router = APIRouter()
 
 
-def get_campaign_repository(session: Annotated[Session, Depends(Stub(Session))]) -> ICampaignStatisticsRepository:
-    return CampaignStatisticsRepository(session)
+def get_campaign_gateway(session: Annotated[Session, Depends(Stub(Session))]) -> ICampaignStatisticsGateway:
+    return CampaignStatisticsGateway(session)
 
 
 def get_service(
-        campaign_repository: Annotated[ICampaignStatisticsRepository, Depends(get_campaign_repository)]
+        campaign_gateway: Annotated[ICampaignStatisticsGateway, Depends(get_campaign_gateway)]
 ) -> AnalyticsService:
-    return AnalyticsService(campaign_repository)
+    return AnalyticsService(campaign_gateway)
 
 
 @router.get("/")

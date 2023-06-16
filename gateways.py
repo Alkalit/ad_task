@@ -8,7 +8,7 @@ from db_models import CampaignStat
 from models import StatOrdering, GroupbyFields
 
 
-class ICampaignStatisticsRepository(Protocol):
+class ICampaignStatisticsGateway(Protocol):
 
     def select_campaign_analytical_stats(self,
                                          spec: StatisticSpecification,
@@ -25,8 +25,7 @@ class ICampaignStatisticsRepository(Protocol):
         ...
 
 
-# TODO rename to gateway
-class CampaignStatisticsRepository:
+class CampaignStatisticsGateway:
 
     FIELDS_MAPPING: dict[str, Column] = {
         'date': CampaignStat.date,

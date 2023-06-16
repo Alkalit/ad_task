@@ -6,13 +6,13 @@ from pydantic import BaseModel
 
 from models import StatParams
 from specifications import StatisticSpecification
-from repositories import ICampaignStatisticsRepository
+from gateways import ICampaignStatisticsGateway
 
 
 class Service(Callable):
 
-    def __init__(self, campaign_repository: ICampaignStatisticsRepository):
-        self.campaign_repository = campaign_repository
+    def __init__(self, campaign_gateway: ICampaignStatisticsGateway):
+        self.campaign_gateway = campaign_gateway
 
     def __call__(self, params: BaseModel):
         ...
@@ -32,8 +32,8 @@ class AnalyticsService(Service):
         )
 
         if params.groupby:
-            stats = self.campaign_repository.select_campaign_analytical_stats(spec, params.sort, params.ordering)
+            stats = self.campaign_gateway.select_campaign_analytical_stats(spec, params.sort, params.ordering)
         else:
-            stats = self.campaign_repository.select_campaign_stats(spec, params.sort, params.ordering)
+            stats = self.campaign_gateway.select_campaign_stats(spec, params.sort, params.ordering)
 
         return stats
