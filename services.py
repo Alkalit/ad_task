@@ -2,7 +2,6 @@ from collections.abc import Callable
 from typing import Sequence
 
 from sqlalchemy import Row
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from models import StatParams
@@ -21,7 +20,6 @@ class Service(Callable):
 
 class AnalyticsService(Service):
 
-    # TODO hybrid properties
     # TODO return models
     def __call__(self, params: StatParams) -> Sequence[Row]:
         spec = StatisticSpecification(

@@ -37,12 +37,12 @@ class CampaignStatisticsRepository:
     def __init__(self, session: Session):
         self._session = session
 
-    def _setup_common(self,
-                      expression: Select,
-                      spec: StatisticSpecification,
-                      sort: str | None = None,
-                      ordering: str | None = None,
-                      ) -> Select:
+    def _setup_sql_params(self,
+                          expression: Select,
+                          spec: StatisticSpecification,
+                          sort: str | None = None,
+                          ordering: str | None = None,
+                          ) -> Select:
 
         if spec.date_from:
             expression = expression.where(CampaignStat.date >= spec.date_from)
@@ -84,7 +84,7 @@ class CampaignStatisticsRepository:
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         )
 
-        expression = self._setup_common(expression, spec, sort, ordering)
+        expression = self._setup_sql_params(expression, spec, sort, ordering)
 
         stats = self._session.execute(expression).all()
         return stats
@@ -122,7 +122,7 @@ class CampaignStatisticsRepository:
             (CampaignStat.spend / CampaignStat.installs).label('cpi'),
         ).group_by(*columns)
 
-        expression = self._setup_common(expression, spec, sort, ordering)
+        expression = self._setup_sql_params(expression, spec, sort, ordering)
 
         stats = self._session.execute(expression).all()
         return stats
