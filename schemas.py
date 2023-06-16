@@ -1,5 +1,5 @@
 from typing import NewType
-from datetime import date as pydate
+from datetime import date
 from decimal import Decimal
 from pydantic import BaseModel
 
@@ -11,7 +11,7 @@ Money = NewType('Money', Decimal)
 
 
 class CampaignStatSchema(BaseModel):
-    date: pydate | None
+    date: date | None
     channel: Channel | None
     country: Country | None
     os: OS | None
@@ -21,6 +21,3 @@ class CampaignStatSchema(BaseModel):
     spend: Money
     revenue: Money
     cpi: Money
-
-    class Config:
-        orm_mode = True

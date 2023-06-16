@@ -1,4 +1,8 @@
-from typing import Sequence, Protocol
+from typing import Sequence, Protocol, NewType
+from datetime import date
+from decimal import Decimal
+
+from pydantic import BaseModel, parse_obj_as
 
 from sqlalchemy import select, Select, null, func, asc, desc, Column, Row, ColumnElement
 from sqlalchemy.orm import Session
@@ -6,6 +10,30 @@ from specifications import StatisticSpecification
 
 from db_models import CampaignStat
 from models import StatOrdering, GroupbyFields
+
+
+CampaignStatId = NewType('CampaignStatId', int)
+Channel = NewType('Channel', str)
+Country = NewType('Country', str)
+OS = NewType('OS', str)
+Money = NewType('Money', Decimal)
+
+
+class CampaignStatsDTO(BaseModel):
+
+    date: date | None
+    channel: Channel | None
+    country: Country | None
+    os: OS | None
+    impressions: int
+    clicks: int
+    installs: int
+    spend: Money
+    revenue: Money
+    cpi: Money
+
+    class Config:
+        orm_mode = True
 
 
 class ICampaignStatisticsGateway(Protocol):
@@ -38,7 +66,6 @@ class CampaignStatisticsGateway:
         self._session = session
 
     def _setup_select_clause(self, *columns: ColumnElement) -> Select:
-
         expression = select(*columns)
 
         return expression
@@ -75,15 +102,16 @@ class CampaignStatisticsGateway:
 
         return expression
 
-    def _execute(self, expression: Select) -> Sequence[Row]:
-        result = self._session.execute(expression).all()
-        return result
+    def _execute(self, expression: Select) -> list[CampaignStatsDTO]:
+        raws = self._session.execute(expression).all()
+        stats = parse_obj_as(list[CampaignStatsDTO], raws)
+        return stats
 
     def select_campaign_stats(self,
                               spec: StatisticSpecification,
                               sort: str | None = None,
                               ordering: str | None = None,
-                              ) -> Sequence[Row]:
+                              ) -> list[CampaignStatsDTO]:
 
         expression = self._setup_select_clause(
             CampaignStat.date,
@@ -107,7 +135,7 @@ class CampaignStatisticsGateway:
                                          spec: StatisticSpecification,
                                          sort: str | None = None,
                                          ordering: str | None = None,
-                                         ) -> Sequence[Row]:
+                                         ) -> list[CampaignStatsDTO]:
 
         columns_with_nulls: list[Column] = []
         groupby_columns: list[Column] = []

@@ -1,12 +1,10 @@
 from collections.abc import Callable
-from typing import Sequence
 
-from sqlalchemy import Row
 from pydantic import BaseModel
 
 from models import StatParams
 from specifications import StatisticSpecification
-from gateways import ICampaignStatisticsGateway
+from gateways import ICampaignStatisticsGateway, CampaignStatsDTO
 
 
 class Service(Callable):
@@ -20,8 +18,7 @@ class Service(Callable):
 
 class AnalyticsService(Service):
 
-    # TODO return models
-    def __call__(self, params: StatParams) -> Sequence[Row]:
+    def __call__(self, params: StatParams) -> list[CampaignStatsDTO]:
         spec = StatisticSpecification(
             date_from=params.date_from,
             date_to=params.date_to,
