@@ -1,59 +1,43 @@
 from collections.abc import Callable
-from typing import Sequence
 
-from sqlalchemy import asc, desc, Column, Row
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
-from db_models import CampaignStat
-from models import StatOrdering, StatParams
-from specifications import StatisticSpecification, GroupBySpecification
+from db_models import ColumnName
+from models import StatParams
+from specifications import StatisticSpecification
+from gateways import ICampaignStatisticsGateway, CampaignStatsDTO
 
 
 class Service(Callable):
 
-    def __init__(self, session: Session):
-        self._session = session
+    def __init__(self, campaign_gateway: ICampaignStatisticsGateway):
+        self.campaign_gateway = campaign_gateway
 
     def __call__(self, params: BaseModel):
         ...
 
 
 class AnalyticsService(Service):
-    FIELDS_MAPPING: dict[str, Column] = {
-        'date': CampaignStat.date,
-        'channel': CampaignStat.channel,
-        'country': CampaignStat.country,
-        'os': CampaignStat.os,
-    }
 
-    def __call__(self, params: StatParams) -> Sequence[Row]:
+    def __call__(self, params: StatParams) -> list[CampaignStatsDTO]:
+        spec = StatisticSpecification(
+            date_from=params.date_from,
+            date_to=params.date_to,
+            channels=params.channels,
+            countries=params.countries,
+            os=params.os,
+        )
+
         if params.groupby:
-            specification = GroupBySpecification(
-                date_from=params.date_from,
-                date_to=params.date_to,
-                channels=params.channels,
-                countries=params.countries,
-                os=params.os,
-                groupby=params.groupby,
+            align_columns: list[ColumnName] = ['date', 'channel', 'country', 'os']
+            stats = self.campaign_gateway.select_campaign_analytical_stats(
+                spec,
+                params.groupby,
+                align_columns,
+                params.sort,
+                params.ordering,
             )
         else:
-            specification = StatisticSpecification(
-                date_from=params.date_from,
-                date_to=params.date_to,
-                channels=params.channels,
-                countries=params.countries,
-                os=params.os,
-            )
+            stats = self.campaign_gateway.select_campaign_stats(spec, params.sort, params.ordering)
 
-        expression = specification()
-
-        if params.sort:
-            field = self.FIELDS_MAPPING.get(params.sort)
-            if params.ordering == StatOrdering.asc:
-                direction = asc
-            else:
-                direction = desc
-            expression = expression.order_by(direction(field))
-        stats = self._session.execute(expression).all()
         return stats
