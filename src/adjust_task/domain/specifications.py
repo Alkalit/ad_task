@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
-from src.adjust_task.infrastructure.db_models import ColumnName
+from adjust_task.infrastructure.db_models import ColumnName
 
 
 class BaseSpecification:

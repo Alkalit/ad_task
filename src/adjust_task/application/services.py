@@ -2,10 +2,10 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
-from src.adjust_task.infrastructure.db_models import ColumnName
-from src.adjust_task.domain.models import StatParams
-from src.adjust_task.domain.specifications import StatisticSpecification
-from src.adjust_task.adapters.database.gateways import ICampaignStatisticsGateway, CampaignStatsDTO
+from adjust_task.infrastructure.db_models import ColumnName
+from adjust_task.domain.models import StatParams
+from adjust_task.domain.specifications import StatisticSpecification
+from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway, CampaignStatsDTO
 
 
 class Service(Callable):

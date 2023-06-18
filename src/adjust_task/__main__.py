@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
 
-from src.adjust_task.presentation.api import router
-from src.adjust_task.infrastructure.database import Base, setup_engine, setup_session
+from adjust_task.presentation.api import router
+from adjust_task.infrastructure.database import Base, setup_engine, setup_session
 
 
 def setup_app(app: FastAPI) -> None:

@@ -1,7 +1,7 @@
 from typing import NewType
 
 from sqlalchemy import Column, Integer, Date, String, Numeric
-from database import Base
+from adjust_task.infrastructure.database import Base
 
 __all__ = ['CampaignStat', 'ColumnName']
 

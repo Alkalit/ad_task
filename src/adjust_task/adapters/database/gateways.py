@@ -6,10 +6,10 @@ from pydantic import BaseModel, parse_obj_as
 
 from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
-from src.adjust_task.domain.specifications import StatisticSpecification
 
-from src.adjust_task.infrastructure.db_models import CampaignStat, ColumnName
-from src.adjust_task.domain.models import StatOrdering
+from adjust_task.domain.specifications import StatisticSpecification
+from adjust_task.infrastructure.db_models import CampaignStat, ColumnName
+from adjust_task.domain.models import StatOrdering
 
 CampaignStatId = NewType('CampaignStatId', int)
 Money = NewType('Money', Decimal)
