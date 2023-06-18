@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO
 from adjust_task.domain.dto import StatisticsDTO
-from adjust_task.infrastructure.db_models import CampaignStat, ColumnName
+from adjust_task.infrastructure.models import CampaignStat, ColumnName
 from adjust_task.domain.models import StatOrdering
 
 
