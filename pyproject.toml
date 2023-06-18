@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[project]
+name = "adjust_task"
+version = "1.0"
+authors = [
+    { name = "Alex", email = "lyoffa412@gmail.com" },
+]
+description = "Test task for adjust"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.95.*",
+    "httpx==0.24.*",
+    "SQLAlchemy==2.0.*",
+    "pydantic==1.10.*",
+    "uvicorn==0.22.*",
+]
+[project.optional-dependencies]
+test = [
+    "pytest"
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/Alkalit/adjust_task"
+"Bug Tracker" = "https://github.com/Alkalit/adjust_task/issues"
