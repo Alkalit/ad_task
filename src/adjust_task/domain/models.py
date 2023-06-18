@@ -29,3 +29,4 @@ class StatSortableFields(str, Enum):
 
 
 Money = NewType('Money', Decimal)
+ColumnName = NewType('ColumnName', str)

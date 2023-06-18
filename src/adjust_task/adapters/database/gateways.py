@@ -6,8 +6,8 @@ from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElem
 from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
-from adjust_task.infrastructure.models import CampaignStat, ColumnName
-from adjust_task.domain.models import StatOrdering
+from adjust_task.infrastructure.models import CampaignStat
+from adjust_task.domain.models import StatOrdering, ColumnName
 
 
 class ICampaignStatisticsGateway(Protocol):
