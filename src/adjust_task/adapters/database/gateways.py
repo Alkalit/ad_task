@@ -1,4 +1,4 @@
-from typing import Protocol, NewType
+from typing import Protocol
 
 from pydantic import BaseModel, parse_obj_as
 
@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat
-from adjust_task.domain.models import StatOrdering, ColumnName
+from adjust_task.application.models import StatOrdering, ColumnName
 
 
 class ICampaignStatisticsGateway(Protocol):

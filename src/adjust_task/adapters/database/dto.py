@@ -3,7 +3,8 @@ from datetime import date
 
 from pydantic import BaseModel
 
-from adjust_task.domain.models import Money, ColumnName
+from adjust_task.application.models import ColumnName
+from adjust_task.domain.models import Money
 
 
 class CampaignStatsDTO(BaseModel):

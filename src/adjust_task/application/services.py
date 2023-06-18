@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
-from adjust_task.domain.models import ColumnName
+from adjust_task.application.models import ColumnName
 from adjust_task.presentation.schemas import CampaignStatParams
 from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO

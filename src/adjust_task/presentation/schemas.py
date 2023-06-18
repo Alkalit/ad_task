@@ -4,7 +4,8 @@ from datetime import date
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from adjust_task.domain.models import Money, StatSortableFields, GroupbyFields, StatOrdering
+from adjust_task.application.models import StatSortableFields, GroupbyFields, StatOrdering
+from adjust_task.domain.models import Money
 
 Channel = NewType('Channel', str)
 Country = NewType('Country', str)
