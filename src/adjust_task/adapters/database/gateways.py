@@ -1,5 +1,4 @@
 from typing import Protocol, NewType
-from datetime import date
 from decimal import Decimal
 
 from pydantic import BaseModel, parse_obj_as
@@ -7,29 +6,13 @@ from pydantic import BaseModel, parse_obj_as
 from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
 
+from adjust_task.adapters.database.dto import CampaignStatsDTO
 from adjust_task.domain.specifications import StatisticSpecification
 from adjust_task.infrastructure.db_models import CampaignStat, ColumnName
 from adjust_task.domain.models import StatOrdering
 
 CampaignStatId = NewType('CampaignStatId', int)
 Money = NewType('Money', Decimal)
-
-
-class CampaignStatsDTO(BaseModel):
-
-    date: date | None
-    channel: ColumnName | None
-    country: ColumnName | None
-    os: ColumnName | None
-    impressions: int
-    clicks: int
-    installs: int
-    spend: Money
-    revenue: Money
-    cpi: Money
-
-    class Config:
-        orm_mode = True
 
 
 class ICampaignStatisticsGateway(Protocol):
