@@ -1,5 +1,7 @@
 from enum import Enum
+from typing import NewType
 
+from decimal import Decimal
 from fastapi import Query
 from pydantic import BaseModel, Field
 from datetime import date
@@ -38,3 +40,6 @@ class StatParams(BaseModel):
     sort: StatSortableFields | None = Field(Query(None))
     groupby: list[GroupbyFields] | None = Field(Query(None))
     ordering: StatOrdering = Field(Query(StatOrdering.asc))
+
+
+Money = NewType('Money', Decimal)

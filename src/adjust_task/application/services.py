@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from adjust_task.infrastructure.db_models import ColumnName
 from adjust_task.domain.models import StatParams
-from adjust_task.domain.specifications import StatisticSpecification
+from adjust_task.domain.dto import StatisticsDTO
 from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO
 
@@ -21,7 +21,7 @@ class Service(Callable):
 class AnalyticsService(Service):
 
     def __call__(self, params: StatParams) -> list[CampaignStatsDTO]:
-        spec = StatisticSpecification(
+        spec = StatisticsDTO(
             date_from=params.date_from,
             date_to=params.date_to,
             channels=params.channels,

@@ -2,7 +2,7 @@ from datetime import date
 
 from pydantic import BaseModel
 
-from adjust_task.adapters.database.gateways import Money
+from adjust_task.domain.models import Money
 from adjust_task.infrastructure.db_models import ColumnName
 
 

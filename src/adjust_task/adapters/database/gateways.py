@@ -1,5 +1,4 @@
 from typing import Protocol, NewType
-from decimal import Decimal
 
 from pydantic import BaseModel, parse_obj_as
 
@@ -7,18 +6,17 @@ from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElem
 from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO
-from adjust_task.domain.specifications import StatisticSpecification
+from adjust_task.domain.dto import StatisticsDTO
 from adjust_task.infrastructure.db_models import CampaignStat, ColumnName
 from adjust_task.domain.models import StatOrdering
 
 CampaignStatId = NewType('CampaignStatId', int)
-Money = NewType('Money', Decimal)
 
 
 class ICampaignStatisticsGateway(Protocol):
 
     def select_campaign_analytical_stats(self,
-                                         spec: StatisticSpecification,
+                                         spec: StatisticsDTO,
                                          groupbys: list[ColumnName],
                                          align_columns: list[ColumnName],
                                          sort: ColumnName | None = None,
@@ -27,7 +25,7 @@ class ICampaignStatisticsGateway(Protocol):
         ...
 
     def select_campaign_stats(self,
-                              spec: StatisticSpecification,
+                              spec: StatisticsDTO,
                               sort: ColumnName | None = None,
                               ordering: ColumnName | None = None,
                               ) -> list[BaseModel]:
@@ -46,7 +44,7 @@ class CampaignStatisticsGateway:
 
     def _setup_sql_params(self,
                           expression: Select,
-                          spec: StatisticSpecification,
+                          spec: StatisticsDTO,
                           sort: ColumnName | None = None,
                           ordering: ColumnName | None = None,
                           groupby: list[ColumnElement] = None,
@@ -102,7 +100,7 @@ class CampaignStatisticsGateway:
         return columns_with_nulls, groupby_columns
 
     def select_campaign_stats(self,
-                              spec: StatisticSpecification,
+                              spec: StatisticsDTO,
                               sort: ColumnName | None = None,
                               ordering: ColumnName | None = None,
                               ) -> list[CampaignStatsDTO]:
@@ -126,7 +124,7 @@ class CampaignStatisticsGateway:
         return stats
 
     def select_campaign_analytical_stats(self,
-                                         spec: StatisticSpecification,
+                                         spec: StatisticsDTO,
                                          groupbys: list[ColumnName],
                                          align_columns: list[ColumnName],
                                          sort: ColumnName | None = None,

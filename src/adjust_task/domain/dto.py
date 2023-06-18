@@ -3,12 +3,8 @@ from datetime import date
 from adjust_task.infrastructure.db_models import ColumnName
 
 
-class BaseSpecification:
-    ...
-
-
 @dataclass
-class StatisticSpecification(BaseSpecification):
+class StatisticsDTO:
     date_from: date | None
     date_to: date | None
     channels: list[ColumnName] | None

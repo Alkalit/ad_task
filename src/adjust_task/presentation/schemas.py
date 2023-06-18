@@ -1,13 +1,13 @@
 from typing import NewType
 from datetime import date
-from decimal import Decimal
 from pydantic import BaseModel
+
+from adjust_task.domain.models import Money
 
 CampaignStatId = NewType('CampaignStatId', int)
 Channel = NewType('Channel', str)
 Country = NewType('Country', str)
 OS = NewType('OS', str)
-Money = NewType('Money', Decimal)
 
 
 class CampaignStatSchema(BaseModel):
