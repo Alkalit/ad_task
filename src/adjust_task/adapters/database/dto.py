@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import date
 
 from pydantic import BaseModel
@@ -21,3 +22,12 @@ class CampaignStatsDTO(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+@dataclass
+class StatisticsDTO:
+    date_from: date | None
+    date_to: date | None
+    channels: list[ColumnName] | None
+    countries: list[ColumnName] | None
+    os: list[ColumnName] | None

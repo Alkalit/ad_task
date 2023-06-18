@@ -4,9 +4,8 @@ from pydantic import BaseModel
 
 from adjust_task.infrastructure.models import ColumnName
 from adjust_task.presentation.schemas import CampaignStatParams
-from adjust_task.domain.dto import StatisticsDTO
 from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway
-from adjust_task.adapters.database.dto import CampaignStatsDTO
+from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 
 
 class Service(Callable):

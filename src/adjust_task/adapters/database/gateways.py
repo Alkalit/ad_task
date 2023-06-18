@@ -5,8 +5,7 @@ from pydantic import BaseModel, parse_obj_as
 from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
 
-from adjust_task.adapters.database.dto import CampaignStatsDTO
-from adjust_task.domain.dto import StatisticsDTO
+from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat, ColumnName
 from adjust_task.domain.models import StatOrdering
 
