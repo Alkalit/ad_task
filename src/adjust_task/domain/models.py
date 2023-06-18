@@ -2,9 +2,6 @@ from enum import Enum
 from typing import NewType
 
 from decimal import Decimal
-from fastapi import Query
-from pydantic import BaseModel, Field
-from datetime import date
 
 
 class GroupbyFields(str, Enum):
@@ -29,17 +26,6 @@ class StatSortableFields(str, Enum):
     installs = 'installs'
     spend = 'spend'
     revenue = 'revenue'
-
-
-class StatParams(BaseModel):
-    date_from: date | None = Field(Query(None))
-    date_to: date | None = Field(Query(None))
-    channels: list[str] | None = Field(Query(None))
-    countries: list[str] | None = Field(Query(None))
-    os: list[str] | None = Field(Query(None))
-    sort: StatSortableFields | None = Field(Query(None))
-    groupby: list[GroupbyFields] | None = Field(Query(None))
-    ordering: StatOrdering = Field(Query(StatOrdering.asc))
 
 
 Money = NewType('Money', Decimal)

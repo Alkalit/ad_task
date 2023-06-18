@@ -3,7 +3,7 @@ from collections.abc import Callable
 from pydantic import BaseModel
 
 from adjust_task.infrastructure.db_models import ColumnName
-from adjust_task.domain.models import StatParams
+from adjust_task.presentation.schemas import CampaignStatParams
 from adjust_task.domain.dto import StatisticsDTO
 from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO
@@ -20,7 +20,7 @@ class Service(Callable):
 
 class AnalyticsService(Service):
 
-    def __call__(self, params: StatParams) -> list[CampaignStatsDTO]:
+    def __call__(self, params: CampaignStatParams) -> list[CampaignStatsDTO]:
         spec = StatisticsDTO(
             date_from=params.date_from,
             date_to=params.date_to,
