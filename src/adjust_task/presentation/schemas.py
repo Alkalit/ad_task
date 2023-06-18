@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 
 from adjust_task.domain.models import Money, StatSortableFields, GroupbyFields, StatOrdering
 
-CampaignStatId = NewType('CampaignStatId', int)
 Channel = NewType('Channel', str)
 Country = NewType('Country', str)
 OS = NewType('OS', str)
