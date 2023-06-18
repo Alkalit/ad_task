@@ -3,11 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from models import StatParams
+from src.adjust_task.domain.models import StatParams
 from schemas import CampaignStatSchema
-from services import AnalyticsService
-from gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
-from stub import Stub
+from src.adjust_task.application.services import AnalyticsService
+from src.adjust_task.adapters.database.gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
+from src.adjust_task.presentation.utils.stub import Stub
 
 router = APIRouter()
 

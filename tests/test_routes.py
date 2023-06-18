@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from sqlalchemy.orm import Session
 
-from db_models import CampaignStat
+from src.adjust_task.infrastructure.db_models import CampaignStat
 from decimal import Decimal
 from datetime import date
 
