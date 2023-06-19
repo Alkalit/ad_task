@@ -1,15 +1,19 @@
 from typing import NewType
 from datetime import date
 
+from _decimal import Decimal
 from fastapi import Query
 from pydantic import BaseModel, Field
 
 from adjust_task.application.models import SortableFields, GroupbyFields, Ordering
-from adjust_task.domain.models import Money
+
+__all__ = ['CampaignStatParams', 'CampaignStatSchema']
+
 
 Channel = NewType('Channel', str)
 Country = NewType('Country', str)
 OS = NewType('OS', str)
+Money = NewType('Money', Decimal)
 
 
 class CampaignStatSchema(BaseModel):

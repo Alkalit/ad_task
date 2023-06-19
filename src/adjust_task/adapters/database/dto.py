@@ -4,11 +4,12 @@ from datetime import date
 from pydantic import BaseModel
 
 from adjust_task.application.models import ColumnName
-from adjust_task.domain.models import Money
+from adjust_task.presentation.schemas import Money
+
+__all__ = ['CampaignStatsDTO', 'StatisticsDTO']
 
 
 class CampaignStatsDTO(BaseModel):
-
     date: date | None
     channel: ColumnName | None
     country: ColumnName | None

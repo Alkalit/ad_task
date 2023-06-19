@@ -7,6 +7,8 @@ from adjust_task.presentation.schemas import CampaignStatParams
 from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 
+__all__ = ['Service', 'AnalyticsService']
+
 
 class Service(Callable):
 

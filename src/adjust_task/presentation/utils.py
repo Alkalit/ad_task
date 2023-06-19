@@ -1,6 +1,9 @@
 from typing import Callable
 
 
+__all__ = ['Stub']
+
+
 class Stub:
     def __init__(self, dependency: Callable, **kwargs):
         self._dependency = dependency

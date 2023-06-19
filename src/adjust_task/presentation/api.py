@@ -8,6 +8,8 @@ from adjust_task.application.services import AnalyticsService
 from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.presentation.utils import Stub
 
+__all__ = ['router']
+
 router = APIRouter()
 
 
