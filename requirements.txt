@@ -1,6 +1,0 @@
-fastapi==0.95.2
-pytest==7.3.1
-httpx==0.24.0
-SQLAlchemy==2.0.13
-pydantic==1.10.7
-uvicorn==0.22.0

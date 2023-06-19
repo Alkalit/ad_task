@@ -1,11 +1,12 @@
+from decimal import Decimal
+from datetime import date
+
 import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 from sqlalchemy.orm import Session
 
-from db_models import CampaignStat
-from decimal import Decimal
-from datetime import date
+from adjust_task.infrastructure.models import CampaignStat
 
 
 @pytest.fixture(autouse=True)

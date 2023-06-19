@@ -1,9 +1,7 @@
-from typing import NewType
-
 from sqlalchemy import Column, Integer, Date, String, Numeric
-from database import Base
+from adjust_task.infrastructure.database import Base
 
-__all__ = ['CampaignStat', 'ColumnName']
+__all__ = ['CampaignStat']
 
 
 class CampaignStat(Base):
@@ -19,6 +17,3 @@ class CampaignStat(Base):
     installs = Column(Integer, nullable=False, default=0)
     spend = Column(Numeric, nullable=False, default="0")
     revenue = Column(Numeric, nullable=False, default="0")
-
-
-ColumnName = NewType('ColumnName', str)

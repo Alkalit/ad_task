@@ -3,11 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from models import StatParams
-from schemas import CampaignStatSchema
-from services import AnalyticsService
-from gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
-from stub import Stub
+from adjust_task.presentation.schemas import CampaignStatSchema, CampaignStatParams
+from adjust_task.application.services import AnalyticsService
+from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
+from adjust_task.presentation.utils import Stub
 
 router = APIRouter()
 
@@ -24,7 +23,7 @@ def get_service(
 
 @router.get("/")
 def root(
-        params: Annotated[StatParams, Depends()],
+        params: Annotated[CampaignStatParams, Depends()],
         service: Annotated[AnalyticsService, Depends(get_service)],
 ) -> list[CampaignStatSchema]:
     stats = service(params)

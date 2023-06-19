@@ -1,53 +1,34 @@
 from typing import Protocol, NewType
-from datetime import date
-from decimal import Decimal
 
-from pydantic import BaseModel, parse_obj_as
+from pydantic import parse_obj_as
 
 from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
-from specifications import StatisticSpecification
 
-from db_models import CampaignStat, ColumnName
-from models import StatOrdering
-
-CampaignStatId = NewType('CampaignStatId', int)
-Money = NewType('Money', Decimal)
+from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
+from adjust_task.infrastructure.models import CampaignStat
+from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF
 
 
-class CampaignStatsDTO(BaseModel):
-
-    date: date | None
-    channel: ColumnName | None
-    country: ColumnName | None
-    os: ColumnName | None
-    impressions: int
-    clicks: int
-    installs: int
-    spend: Money
-    revenue: Money
-    cpi: Money
-
-    class Config:
-        orm_mode = True
+NullColumn = NewType('NullColumn', ColumnElement)
 
 
 class ICampaignStatisticsGateway(Protocol):
 
     def select_campaign_analytical_stats(self,
-                                         spec: StatisticSpecification,
-                                         groupbys: list[ColumnName],
-                                         align_columns: list[ColumnName],
-                                         sort: ColumnName | None = None,
-                                         ordering: StatOrdering | None = None,
-                                         ) -> list[BaseModel]:
+                                         spec: StatisticsDTO,
+                                         groupbys: list[GbF],
+                                         align_columns: list[GbF],
+                                         sort: SrtF | None = None,
+                                         ordering: Ordering = Ordering.asc,
+                                         ) -> list[CampaignStatsDTO]:
         ...
 
     def select_campaign_stats(self,
-                              spec: StatisticSpecification,
-                              sort: ColumnName | None = None,
-                              ordering: ColumnName | None = None,
-                              ) -> list[BaseModel]:
+                              spec: StatisticsDTO,
+                              sort: SrtF | None = None,
+                              ordering: Ordering = Ordering.asc,
+                              ) -> list[CampaignStatsDTO]:
         ...
 
 
@@ -55,6 +36,7 @@ class CampaignStatisticsGateway:
 
     def __init__(self, session: Session):
         self._session = session
+        self.mapper: Mapper = inspect(CampaignStat)
 
     def _setup_select_clause(self, *columns: ColumnElement) -> Select:
         expression = select(*columns)
@@ -63,9 +45,9 @@ class CampaignStatisticsGateway:
 
     def _setup_sql_params(self,
                           expression: Select,
-                          spec: StatisticSpecification,
-                          sort: ColumnName | None = None,
-                          ordering: ColumnName | None = None,
+                          spec: StatisticsDTO,
+                          sort: SrtF | None = None,
+                          ordering: Ordering = Ordering.asc,
                           groupby: list[ColumnElement] = None,
                           ) -> Select:
 
@@ -81,9 +63,8 @@ class CampaignStatisticsGateway:
             expression = expression.where(CampaignStat.os.in_(spec.os))
 
         if sort:
-            mapper: Mapper = inspect(CampaignStat)
-            field = mapper.columns[sort]
-            if ordering == StatOrdering.asc:
+            field = self.mapper.columns[sort]
+            if ordering == Ordering.asc:
                 direction = asc
             else:
                 direction = desc
@@ -100,28 +81,28 @@ class CampaignStatisticsGateway:
         return stats
 
     def _get_groupbys(self,
-                      groupbys: list[ColumnName],
-                      align_columns: list[ColumnName]
-                      ) -> tuple[list[Column], list[Column]]:
-        columns_with_nulls: list[Column] = []
+                      groupbys: list[GbF],
+                      align_columns: list[GbF]
+                      ) -> tuple[list[NullColumn], list[Column]]:
+
+        nulled_column: list[NullColumn] = []
         groupby_columns: list[Column] = []
-        fields: dict[ColumnName, int] = dict(zip(groupbys, range(len(groupbys))))
-        mapper: Mapper = inspect(CampaignStat)
+        fields: dict[GbF, int] = dict(zip(groupbys, range(len(groupbys))))
 
         for field in align_columns:
             if field in fields:
-                column = mapper.columns[field]
+                column = self.mapper.columns[field]
                 groupby_columns.append(column)
             else:
                 column = null().label(field)
-            columns_with_nulls.append(column)
+            nulled_column.append(column)
 
-        return columns_with_nulls, groupby_columns
+        return nulled_column, groupby_columns
 
     def select_campaign_stats(self,
-                              spec: StatisticSpecification,
-                              sort: ColumnName | None = None,
-                              ordering: ColumnName | None = None,
+                              spec: StatisticsDTO,
+                              sort: SrtF | None = None,
+                              ordering: Ordering = Ordering.asc,
                               ) -> list[CampaignStatsDTO]:
 
         expression = self._setup_select_clause(
@@ -143,11 +124,11 @@ class CampaignStatisticsGateway:
         return stats
 
     def select_campaign_analytical_stats(self,
-                                         spec: StatisticSpecification,
-                                         groupbys: list[ColumnName],
-                                         align_columns: list[ColumnName],
-                                         sort: ColumnName | None = None,
-                                         ordering: StatOrdering | None = None,
+                                         spec: StatisticsDTO,
+                                         groupbys: list[GbF],
+                                         align_columns: list[GbF],
+                                         sort: SrtF | None = None,
+                                         ordering: Ordering = Ordering.asc,
                                          ) -> list[CampaignStatsDTO]:
 
         columns_with_nulls, groupby_columns = self._get_groupbys(groupbys, align_columns)
