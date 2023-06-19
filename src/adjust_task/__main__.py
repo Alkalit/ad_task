@@ -1,32 +1,15 @@
-import uvicorn
-from fastapi import FastAPI
 from sqlalchemy.orm import Session
 
-from adjust_task.presentation.api import router
+from adjust_task.infrastructure.framework import setup_api
 from adjust_task.infrastructure.database import setup_engine, setup_session
 from adjust_task.infrastructure.models import Base
-
-
-def setup_app(app: FastAPI) -> None:
-    app.include_router(router)
-
-
-def run_server(app: FastAPI) -> None:
-    uvicorn_config = uvicorn.Config(app)
-    server = uvicorn.Server(uvicorn_config)
-    server.run()
-
-
-def setup_api() -> FastAPI:
-    app = FastAPI()
-    setup_app(app)
-
-    return app
+from adjust_task.infrastructure.server import run_server
 
 
 def main() -> None:
     engine = setup_engine()
     session_factory = setup_session(engine)
+    # TODO alembic
     Base.metadata.create_all(bind=engine)
 
     app = setup_api(session_factory)

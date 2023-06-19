@@ -1,8 +1,7 @@
 from sqlalchemy import Column, Integer, Date, String, Numeric
-
-__all__ = ['CampaignStat']
-
 from sqlalchemy.ext.declarative import declarative_base
+
+__all__ = ['CampaignStat', 'Base']
 
 Base = declarative_base()
 
