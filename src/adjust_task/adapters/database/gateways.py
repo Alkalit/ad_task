@@ -20,14 +20,14 @@ class ICampaignStatisticsGateway(Protocol):
                                          groupbys: list[GbF],
                                          align_columns: list[GbF],
                                          sort: SSF | None = None,
-                                         ordering: StatOrdering | None = None,
+                                         ordering: StatOrdering = StatOrdering.asc,
                                          ) -> list[CampaignStatsDTO]:
         ...
 
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
                               sort: SSF | None = None,
-                              ordering: StatOrdering | None = None,
+                              ordering: StatOrdering = StatOrdering.asc,
                               ) -> list[CampaignStatsDTO]:
         ...
 
@@ -47,7 +47,7 @@ class CampaignStatisticsGateway:
                           expression: Select,
                           spec: StatisticsDTO,
                           sort: SSF | None = None,
-                          ordering: StatOrdering | None = None,
+                          ordering: StatOrdering = StatOrdering.asc,
                           groupby: list[ColumnElement] = None,
                           ) -> Select:
 
@@ -102,7 +102,7 @@ class CampaignStatisticsGateway:
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
                               sort: SSF | None = None,
-                              ordering: StatOrdering | None = None,
+                              ordering: StatOrdering = StatOrdering.asc,
                               ) -> list[CampaignStatsDTO]:
 
         expression = self._setup_select_clause(
@@ -128,7 +128,7 @@ class CampaignStatisticsGateway:
                                          groupbys: list[GbF],
                                          align_columns: list[GbF],
                                          sort: SSF | None = None,
-                                         ordering: StatOrdering | None = None,
+                                         ordering: StatOrdering = StatOrdering.asc,
                                          ) -> list[CampaignStatsDTO]:
 
         columns_with_nulls, groupby_columns = self._get_groupbys(groupbys, align_columns)
