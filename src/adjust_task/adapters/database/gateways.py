@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from pydantic import BaseModel, parse_obj_as
+from pydantic import parse_obj_as
 
 from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
@@ -18,14 +18,14 @@ class ICampaignStatisticsGateway(Protocol):
                                          align_columns: list[ColumnName],
                                          sort: ColumnName | None = None,
                                          ordering: StatOrdering | None = None,
-                                         ) -> list[BaseModel]:
+                                         ) -> list[CampaignStatsDTO]:
         ...
 
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
                               sort: ColumnName | None = None,
                               ordering: ColumnName | None = None,
-                              ) -> list[BaseModel]:
+                              ) -> list[CampaignStatsDTO]:
         ...
 
 
