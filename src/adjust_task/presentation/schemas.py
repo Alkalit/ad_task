@@ -4,7 +4,7 @@ from datetime import date
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from adjust_task.application.models import StatSortableFields, GroupbyFields, StatOrdering
+from adjust_task.application.models import SortableFields, GroupbyFields, Ordering
 from adjust_task.domain.models import Money
 
 Channel = NewType('Channel', str)
@@ -31,6 +31,6 @@ class CampaignStatParams(BaseModel):
     channels: list[str] | None = Field(Query(None))
     countries: list[str] | None = Field(Query(None))
     os: list[str] | None = Field(Query(None))
-    sort: StatSortableFields | None = Field(Query(None))
+    sort: SortableFields | None = Field(Query(None))
     groupby: list[GroupbyFields] | None = Field(Query(None))
-    ordering: StatOrdering = Field(Query(StatOrdering.asc))
+    ordering: Ordering = Field(Query(Ordering.asc))

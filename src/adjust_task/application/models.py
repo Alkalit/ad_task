@@ -13,12 +13,12 @@ class GroupbyFields(ColumnName, Enum):
     os = 'os'
 
 
-class StatOrdering(ColumnName, Enum):
+class Ordering(ColumnName, Enum):
     asc = 'asc'
     desc = 'desc'
 
 
-class StatSortableFields(ColumnName, Enum):
+class SortableFields(ColumnName, Enum):
     date = 'date'
     channel = 'channel'
     country = 'country'

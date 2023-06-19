@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat
-from adjust_task.application.models import StatOrdering, GroupbyFields as GbF, StatSortableFields as SSF
+from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF
 
 
 NullColumn = NewType('NullColumn', ColumnElement)
@@ -19,15 +19,15 @@ class ICampaignStatisticsGateway(Protocol):
                                          spec: StatisticsDTO,
                                          groupbys: list[GbF],
                                          align_columns: list[GbF],
-                                         sort: SSF | None = None,
-                                         ordering: StatOrdering = StatOrdering.asc,
+                                         sort: SrtF | None = None,
+                                         ordering: Ordering = Ordering.asc,
                                          ) -> list[CampaignStatsDTO]:
         ...
 
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
-                              sort: SSF | None = None,
-                              ordering: StatOrdering = StatOrdering.asc,
+                              sort: SrtF | None = None,
+                              ordering: Ordering = Ordering.asc,
                               ) -> list[CampaignStatsDTO]:
         ...
 
@@ -46,8 +46,8 @@ class CampaignStatisticsGateway:
     def _setup_sql_params(self,
                           expression: Select,
                           spec: StatisticsDTO,
-                          sort: SSF | None = None,
-                          ordering: StatOrdering = StatOrdering.asc,
+                          sort: SrtF | None = None,
+                          ordering: Ordering = Ordering.asc,
                           groupby: list[ColumnElement] = None,
                           ) -> Select:
 
@@ -64,7 +64,7 @@ class CampaignStatisticsGateway:
 
         if sort:
             field = self.mapper.columns[sort]
-            if ordering == StatOrdering.asc:
+            if ordering == Ordering.asc:
                 direction = asc
             else:
                 direction = desc
@@ -101,8 +101,8 @@ class CampaignStatisticsGateway:
 
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
-                              sort: SSF | None = None,
-                              ordering: StatOrdering = StatOrdering.asc,
+                              sort: SrtF | None = None,
+                              ordering: Ordering = Ordering.asc,
                               ) -> list[CampaignStatsDTO]:
 
         expression = self._setup_select_clause(
@@ -127,8 +127,8 @@ class CampaignStatisticsGateway:
                                          spec: StatisticsDTO,
                                          groupbys: list[GbF],
                                          align_columns: list[GbF],
-                                         sort: SSF | None = None,
-                                         ordering: StatOrdering = StatOrdering.asc,
+                                         sort: SrtF | None = None,
+                                         ordering: Ordering = Ordering.asc,
                                          ) -> list[CampaignStatsDTO]:
 
         columns_with_nulls, groupby_columns = self._get_groupbys(groupbys, align_columns)
