@@ -1,4 +1,4 @@
-from typing import Protocol, NewType
+from typing import NewType
 
 from pydantic import parse_obj_as
 
@@ -10,26 +10,10 @@ from adjust_task.infrastructure.models import CampaignStat
 from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF
 
 
+__all__ = ['CampaignStatisticsGateway']
+
+
 NullColumn = NewType('NullColumn', ColumnElement)
-
-
-class ICampaignStatisticsGateway(Protocol):
-
-    def select_campaign_analytical_stats(self,
-                                         spec: StatisticsDTO,
-                                         groupbys: list[GbF],
-                                         align_columns: list[GbF],
-                                         sort: SrtF | None = None,
-                                         ordering: Ordering = Ordering.asc,
-                                         ) -> list[CampaignStatsDTO]:
-        ...
-
-    def select_campaign_stats(self,
-                              spec: StatisticsDTO,
-                              sort: SrtF | None = None,
-                              ordering: Ordering = Ordering.asc,
-                              ) -> list[CampaignStatsDTO]:
-        ...
 
 
 class CampaignStatisticsGateway:

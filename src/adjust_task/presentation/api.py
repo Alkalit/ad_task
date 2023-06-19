@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from adjust_task.presentation.schemas import CampaignStatSchema, CampaignStatParams
 from adjust_task.application.services import AnalyticsService
-from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway, CampaignStatisticsGateway
+from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.presentation.utils import Stub
 
 router = APIRouter()
@@ -16,7 +16,7 @@ def get_campaign_gateway(session: Annotated[Session, Depends(Stub(Session))]) ->
 
 
 def get_service(
-        campaign_gateway: Annotated[ICampaignStatisticsGateway, Depends(get_campaign_gateway)]
+        campaign_gateway: Annotated[CampaignStatisticsGateway, Depends(get_campaign_gateway)]
 ) -> AnalyticsService:
     return AnalyticsService(campaign_gateway)
 

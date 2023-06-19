@@ -4,13 +4,13 @@ from pydantic import BaseModel
 
 from adjust_task.application.models import GroupbyFields as GbF
 from adjust_task.presentation.schemas import CampaignStatParams
-from adjust_task.adapters.database.gateways import ICampaignStatisticsGateway
+from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 
 
 class Service(Callable):
 
-    def __init__(self, campaign_gateway: ICampaignStatisticsGateway):
+    def __init__(self, campaign_gateway: CampaignStatisticsGateway):
         self.campaign_gateway = campaign_gateway
 
     def __call__(self, params: BaseModel):
