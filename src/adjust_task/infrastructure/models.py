@@ -1,7 +1,10 @@
 from sqlalchemy import Column, Integer, Date, String, Numeric
-from adjust_task.infrastructure.database import Base
 
 __all__ = ['CampaignStat']
+
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
 class CampaignStat(Base):

@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session
 
 from adjust_task.presentation.api import router
-from adjust_task.infrastructure.database import Base, setup_engine, setup_session
+from adjust_task.infrastructure.database import setup_engine, setup_session
+from adjust_task.infrastructure.models import Base
 
 
 def setup_app(app: FastAPI) -> None:

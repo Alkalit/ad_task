@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, Engine, event
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi.testclient import TestClient
 
-from adjust_task.infrastructure.database import Base
+from adjust_task.infrastructure.models import Base
 from adjust_task.presentation.api import router
 
 
