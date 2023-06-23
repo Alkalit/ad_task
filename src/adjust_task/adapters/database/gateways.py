@@ -15,7 +15,7 @@ class CampaignStatisticsGateway:
 
     def __init__(self, session: Session):
         self._session = session
-        self.mapper: Mapper = inspect(CampaignStat)
+        self._mapper: Mapper = inspect(CampaignStat)
 
     def _setup_select_clause(self, *columns: ColumnElement) -> Select:
         expression = select(*columns)
@@ -66,7 +66,7 @@ class CampaignStatisticsGateway:
         columns: list[Column] = []
 
         for name in column_names:
-            column = self.mapper.columns[name]
+            column = self._mapper.columns[name]
             columns.append(column)
 
         return columns
