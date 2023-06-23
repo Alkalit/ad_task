@@ -1,19 +1,14 @@
-from typing import NewType
-
 from pydantic import parse_obj_as
 
-from sqlalchemy import select, Select, null, func, asc, desc, Column, ColumnElement, inspect
+from sqlalchemy import select, Select, func, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat
-from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF
+from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF, ColumnName
 
 
 __all__ = ['CampaignStatisticsGateway']
-
-
-NullColumn = NewType('NullColumn', ColumnElement)
 
 
 class CampaignStatisticsGateway:
@@ -47,7 +42,7 @@ class CampaignStatisticsGateway:
             expression = expression.where(CampaignStat.os.in_(spec.os))
 
         if sort:
-            field = self.mapper.columns[sort]
+            [field] = self._get_columns_by_name([sort])
             if ordering == Ordering.asc:
                 direction = asc
             else:
@@ -64,24 +59,17 @@ class CampaignStatisticsGateway:
         stats = parse_obj_as(list[CampaignStatsDTO], raws)
         return stats
 
-    def _get_groupbys(self,
-                      groupbys: list[GbF],
-                      align_columns: list[GbF]
-                      ) -> tuple[list[NullColumn], list[Column]]:
+    def _get_columns_by_name(self,
+                             column_names: list[ColumnName],
+                             ) -> list[Column]:
 
-        nulled_column: list[NullColumn] = []
-        groupby_columns: list[Column] = []
-        fields: dict[GbF, int] = dict(zip(groupbys, range(len(groupbys))))
+        columns: list[Column] = []
 
-        for field in align_columns:
-            if field in fields:
-                column = self.mapper.columns[field]
-                groupby_columns.append(column)
-            else:
-                column = null().label(field)
-            nulled_column.append(column)
+        for name in column_names:
+            column = self.mapper.columns[name]
+            columns.append(column)
 
-        return nulled_column, groupby_columns
+        return columns
 
     def select_campaign_stats(self,
                               spec: StatisticsDTO,
@@ -110,15 +98,14 @@ class CampaignStatisticsGateway:
     def select_campaign_analytical_stats(self,
                                          spec: StatisticsDTO,
                                          groupbys: list[GbF],
-                                         align_columns: list[GbF],
                                          sort: SrtF | None = None,
                                          ordering: Ordering = Ordering.asc,
                                          ) -> list[CampaignStatsDTO]:
 
-        columns_with_nulls, groupby_columns = self._get_groupbys(groupbys, align_columns)
+        groupby_columns = self._get_columns_by_name(groupbys)
 
         expression = self._setup_select_clause(
-            *columns_with_nulls,
+            *groupby_columns,
             func.sum(CampaignStat.impressions).label(CampaignStat.impressions.name),
             func.sum(CampaignStat.clicks).label(CampaignStat.clicks.name),
             func.sum(CampaignStat.installs).label(CampaignStat.installs.name),

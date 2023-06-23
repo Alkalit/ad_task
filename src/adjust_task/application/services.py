@@ -31,15 +31,17 @@ class AnalyticsService(Service):
         )
 
         if params.groupby:
-            align_columns: list[GbF] = [GbF.date, GbF.channel, GbF.country, GbF.os]
             stats = self.campaign_gateway.select_campaign_analytical_stats(
                 spec,
                 params.groupby,
-                align_columns,
                 params.sort,
                 params.ordering,
             )
         else:
-            stats = self.campaign_gateway.select_campaign_stats(spec, params.sort, params.ordering)
+            stats = self.campaign_gateway.select_campaign_stats(
+                spec,
+                params.sort,
+                params.ordering
+            )
 
         return stats
