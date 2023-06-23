@@ -71,48 +71,25 @@ class CampaignStatisticsGateway:
 
         return columns
 
-    def select_campaign_stats(self,
-                              spec: StatisticsDTO,
-                              sort: SrtF | None = None,
-                              ordering: Ordering = Ordering.asc,
-                              ) -> list[CampaignStatsDTO]:
-
-        expression = self._setup_select_clause(
-            CampaignStat.date,
-            CampaignStat.channel,
-            CampaignStat.country,
-            CampaignStat.os,
-            CampaignStat.impressions,
-            CampaignStat.clicks,
-            CampaignStat.installs,
-            CampaignStat.spend,
-            CampaignStat.revenue,
-            (CampaignStat.spend / CampaignStat.installs).label('cpi'),
-        )
-
-        expression = self._setup_sql_params(expression, spec, sort, ordering)
-
-        stats = self._execute(expression)
-        return stats
-
     def select_campaign_analytical_stats(self,
+                                         to_select: list[Column],
                                          spec: StatisticsDTO,
-                                         groupbys: list[GbF],
+                                         groupbys: list[GbF] = None,
                                          sort: SrtF | None = None,
                                          ordering: Ordering = Ordering.asc,
                                          ) -> list[CampaignStatsDTO]:
 
-        groupby_columns = self._get_columns_by_name(groupbys)
-
-        expression = self._setup_select_clause(
-            *groupby_columns,
-            func.sum(CampaignStat.impressions).label(CampaignStat.impressions.name),
-            func.sum(CampaignStat.clicks).label(CampaignStat.clicks.name),
-            func.sum(CampaignStat.installs).label(CampaignStat.installs.name),
-            func.sum(CampaignStat.spend).label(CampaignStat.spend.name),
-            func.sum(CampaignStat.revenue).label(CampaignStat.revenue.name),
-            (CampaignStat.spend / CampaignStat.installs).label('cpi'),
-        )
+        if groupbys:
+            groupby_columns = self._get_columns_by_name(groupbys)
+            expression = self._setup_select_clause(
+                *groupby_columns,
+                *to_select,
+            )
+        else:
+            groupby_columns = None
+            expression = self._setup_select_clause(
+                *to_select,
+            )
 
         expression = self._setup_sql_params(expression, spec, sort, ordering, groupby_columns)
 

@@ -1,11 +1,12 @@
 from collections.abc import Callable
 
 from pydantic import BaseModel
+from sqlalchemy import func
 
-from adjust_task.application.models import GroupbyFields as GbF
 from adjust_task.presentation.schemas import CampaignStatParams
 from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
+from adjust_task.infrastructure.models import CampaignStat
 
 __all__ = ['Service', 'AnalyticsService']
 
@@ -31,17 +32,36 @@ class AnalyticsService(Service):
         )
 
         if params.groupby:
-            stats = self.campaign_gateway.select_campaign_analytical_stats(
-                spec,
-                params.groupby,
-                params.sort,
-                params.ordering,
-            )
+            to_select = \
+                [
+                    func.sum(CampaignStat.impressions).label(CampaignStat.impressions.name),
+                    func.sum(CampaignStat.clicks).label(CampaignStat.clicks.name),
+                    func.sum(CampaignStat.installs).label(CampaignStat.installs.name),
+                    func.sum(CampaignStat.spend).label(CampaignStat.spend.name),
+                    func.sum(CampaignStat.revenue).label(CampaignStat.revenue.name),
+                    (CampaignStat.spend / CampaignStat.installs).label('cpi'),
+                ]
         else:
-            stats = self.campaign_gateway.select_campaign_stats(
-                spec,
-                params.sort,
-                params.ordering
-            )
+            to_select = \
+                [
+                    CampaignStat.date,
+                    CampaignStat.channel,
+                    CampaignStat.country,
+                    CampaignStat.os,
+                    CampaignStat.impressions,
+                    CampaignStat.clicks,
+                    CampaignStat.installs,
+                    CampaignStat.spend,
+                    CampaignStat.revenue,
+                    (CampaignStat.spend / CampaignStat.installs).label('cpi'),
+                ]
+
+        stats = self.campaign_gateway.select_campaign_analytical_stats(
+            to_select,
+            spec,
+            params.groupby,
+            params.sort,
+            params.ordering,
+        )
 
         return stats
