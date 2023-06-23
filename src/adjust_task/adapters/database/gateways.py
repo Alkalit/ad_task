@@ -74,9 +74,9 @@ class CampaignStatisticsGateway:
     def select_campaign_analytical_stats(self,
                                          to_select: list[ColumnElement],
                                          filters: StatisticsDTO,
-                                         groupbys: list[GbF] = None,
                                          sort: SrtF | None = None,
                                          ordering: Ordering = Ordering.asc,
+                                         groupbys: list[GbF] = None,
                                          ) -> list[CampaignStatsDTO]:
 
         if groupbys:

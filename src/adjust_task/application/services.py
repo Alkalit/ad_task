@@ -59,9 +59,9 @@ class AnalyticsService(Service):
         stats = self.campaign_gateway.select_campaign_analytical_stats(
             to_select,
             filters,
-            params.groupby,
             params.sort,
             params.ordering,
+            params.groupby,
         )
 
         return stats
