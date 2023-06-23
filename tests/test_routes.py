@@ -72,9 +72,9 @@ def groupby_dataset(session: Session):
         ),
         CampaignStat(
             date=date(year=2001, month=1, day=1),
-            channel='adcolony',
+            channel='betcolony',
             country='RU',
-            os='android',
+            os='ios',
             impressions=1000,
             clicks=100,
             installs=10,
@@ -83,9 +83,9 @@ def groupby_dataset(session: Session):
         ),
         CampaignStat(
             date=date(year=2001, month=1, day=1),
-            channel='adcolony',
+            channel='cedcolony',
             country='RU',
-            os='android',
+            os='windows',
             impressions=1000,
             clicks=100,
             installs=10,
@@ -95,9 +95,9 @@ def groupby_dataset(session: Session):
 
         CampaignStat(
             date=date(year=2002, month=2, day=2),
-            channel='betcolony',
+            channel='adcolony',
             country='US',
-            os='ios',
+            os='android',
             impressions=2000,
             clicks=200,
             installs=20,
@@ -117,9 +117,9 @@ def groupby_dataset(session: Session):
         ),
         CampaignStat(
             date=date(year=2002, month=2, day=2),
-            channel='betcolony',
+            channel='cedcolony',
             country='US',
-            os='ios',
+            os='windows',
             impressions=2000,
             clicks=200,
             installs=20,
@@ -129,9 +129,9 @@ def groupby_dataset(session: Session):
 
         CampaignStat(
             date=date(year=2003, month=3, day=3),
-            channel='cedcolony',
+            channel='adcolony',
             country='DE',
-            os='windows',
+            os='android',
             impressions=3000,
             clicks=300,
             installs=30,
@@ -140,9 +140,9 @@ def groupby_dataset(session: Session):
         ),
         CampaignStat(
             date=date(year=2003, month=3, day=3),
-            channel='cedcolony',
+            channel='betcolony',
             country='DE',
-            os='windows',
+            os='ios',
             impressions=3000,
             clicks=300,
             installs=30,
@@ -257,7 +257,7 @@ class TestRootEndpoint:
              "clicks": 300, "installs": 30, "spend": 33.3, "revenue": 333.3, "cpi": 1.11},
         ]
 
-    def test_group_by(self, client: TestClient, groupby_dataset):
+    def test_group_by(self, client: TestClient, groupby_dataset, session):
         response: Response = client.get("/?groupby=country")
         assert response.status_code == 200
         result: list[dict] = response.json()

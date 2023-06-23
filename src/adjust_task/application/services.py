@@ -39,7 +39,7 @@ class AnalyticsService(Service):
                     func.sum(CampaignStat.installs).label(CampaignStat.installs.name),
                     func.sum(CampaignStat.spend).label(CampaignStat.spend.name),
                     func.sum(CampaignStat.revenue).label(CampaignStat.revenue.name),
-                    (CampaignStat.spend / CampaignStat.installs).label('cpi'),
+                    (func.sum(CampaignStat.spend) / func.sum(CampaignStat.installs)).label('cpi'),
                 ]
         else:
             to_select = \
