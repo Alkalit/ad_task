@@ -23,7 +23,7 @@ class Service(Callable):
 class AnalyticsService(Service):
 
     def __call__(self, params: CampaignStatParams) -> list[CampaignStatsDTO]:
-        spec = StatisticsDTO(
+        filters = StatisticsDTO(
             date_from=params.date_from,
             date_to=params.date_to,
             channels=params.channels,
@@ -58,7 +58,7 @@ class AnalyticsService(Service):
 
         stats = self.campaign_gateway.select_campaign_analytical_stats(
             to_select,
-            spec,
+            filters,
             params.groupby,
             params.sort,
             params.ordering,

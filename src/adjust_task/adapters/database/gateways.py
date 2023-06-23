@@ -24,22 +24,22 @@ class CampaignStatisticsGateway:
 
     def _setup_sql_params(self,
                           expression: Select,
-                          spec: StatisticsDTO,
+                          filters: StatisticsDTO,
                           sort: SrtF | None = None,
                           ordering: Ordering = Ordering.asc,
                           groupby: list[ColumnElement] = None,
                           ) -> Select:
 
-        if spec.date_from:
-            expression = expression.where(CampaignStat.date >= spec.date_from)
-        if spec.date_to:
-            expression = expression.where(CampaignStat.date < spec.date_to)
-        if spec.channels:
-            expression = expression.where(CampaignStat.channel.in_(spec.channels))
-        if spec.countries:
-            expression = expression.where(CampaignStat.country.in_(spec.countries))
-        if spec.os:
-            expression = expression.where(CampaignStat.os.in_(spec.os))
+        if filters.date_from:
+            expression = expression.where(CampaignStat.date >= filters.date_from)
+        if filters.date_to:
+            expression = expression.where(CampaignStat.date < filters.date_to)
+        if filters.channels:
+            expression = expression.where(CampaignStat.channel.in_(filters.channels))
+        if filters.countries:
+            expression = expression.where(CampaignStat.country.in_(filters.countries))
+        if filters.os:
+            expression = expression.where(CampaignStat.os.in_(filters.os))
 
         if sort:
             [field] = self._get_columns_by_name([sort])
@@ -73,7 +73,7 @@ class CampaignStatisticsGateway:
 
     def select_campaign_analytical_stats(self,
                                          to_select: list[ColumnElement],
-                                         spec: StatisticsDTO,
+                                         filters: StatisticsDTO,
                                          groupbys: list[GbF] = None,
                                          sort: SrtF | None = None,
                                          ordering: Ordering = Ordering.asc,
@@ -91,7 +91,7 @@ class CampaignStatisticsGateway:
                 *to_select,
             )
 
-        expression = self._setup_sql_params(expression, spec, sort, ordering, groupby_columns)
+        expression = self._setup_sql_params(expression, filters, sort, ordering, groupby_columns)
 
         stats = self._execute(expression)
         return stats
