@@ -55,8 +55,8 @@ class CampaignStatisticsGateway:
         return expression
 
     def _execute(self, expression: Select) -> list[CampaignStatsDTO]:
-        raws = self._session.execute(expression).all()
-        stats = parse_obj_as(list[CampaignStatsDTO], raws)
+        rows = self._session.execute(expression).all()
+        stats = parse_obj_as(list[CampaignStatsDTO], rows)
         return stats
 
     def _get_columns_by_name(self,
