@@ -1,6 +1,6 @@
 from pydantic import parse_obj_as
 
-from sqlalchemy import select, Select, func, asc, desc, Column, ColumnElement, inspect
+from sqlalchemy import select, Select, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
 
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
@@ -72,7 +72,7 @@ class CampaignStatisticsGateway:
         return columns
 
     def select_campaign_analytical_stats(self,
-                                         to_select: list[Column],
+                                         to_select: list[ColumnElement],
                                          spec: StatisticsDTO,
                                          groupbys: list[GbF] = None,
                                          sort: SrtF | None = None,
