@@ -42,12 +42,11 @@ class CampaignStatisticsGateway:
             expression = expression.where(CampaignStat.os.in_(filters.os))
 
         if sort:
-            [field] = self._get_columns_by_name([sort])
             if ordering == Ordering.asc:
                 direction = asc
             else:
                 direction = desc
-            expression = expression.order_by(direction(field))
+            expression = expression.order_by(direction(sort))
 
         if groupby:
             expression = expression.group_by(*groupby)
