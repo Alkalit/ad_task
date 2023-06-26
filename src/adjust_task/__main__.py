@@ -9,7 +9,7 @@ def main() -> None:
     engine = setup_engine()
     session_factory = setup_session(engine)
 
-    app = setup_api(session_factory)
+    app = setup_api()
     app.dependency_overrides[Session] = lambda: session_factory()
 
     return run_server(app)
