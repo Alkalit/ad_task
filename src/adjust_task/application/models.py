@@ -28,3 +28,4 @@ class SortableFields(ColumnName, Enum):
     installs = 'installs'
     spend = 'spend'
     revenue = 'revenue'
+    cpi = 'cpi'
