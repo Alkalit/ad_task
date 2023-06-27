@@ -1,3 +1,6 @@
+import operator as op
+from typing import Any, Callable
+
 from pydantic import parse_obj_as
 
 from sqlalchemy import select, Select, asc, desc, Column, ColumnElement, inspect
@@ -7,11 +10,21 @@ from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat
 from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF, ColumnName
 
-
 __all__ = ['CampaignStatisticsGateway']
 
 
+class GatewayException(Exception):
+    pass
+
+
 class CampaignStatisticsGateway:
+    FILTER_COLUMNS: dict[str, Callable[[Any], Any]] = {
+        'date_from': lambda arg: op.ge(CampaignStat.date, arg),
+        'date_to': lambda arg: op.lt(CampaignStat.date, arg),
+        'channels': lambda arg: CampaignStat.channel.in_(arg),
+        'countries': lambda arg: CampaignStat.country.in_(arg),
+        'os': lambda arg: CampaignStat.os.in_(arg),
+    }
 
     def __init__(self, session: Session):
         self._session = session
@@ -30,16 +43,15 @@ class CampaignStatisticsGateway:
                           groupby: list[ColumnElement] = None,
                           ) -> Select:
 
-        if filters.date_from:
-            expression = expression.where(CampaignStat.date >= filters.date_from)
-        if filters.date_to:
-            expression = expression.where(CampaignStat.date < filters.date_to)
-        if filters.channels:
-            expression = expression.where(CampaignStat.channel.in_(filters.channels))
-        if filters.countries:
-            expression = expression.where(CampaignStat.country.in_(filters.countries))
-        if filters.os:
-            expression = expression.where(CampaignStat.os.in_(filters.os))
+        for field_name, value in filters:
+            if value is None:
+                continue
+            try:
+                filter_ = self.FILTER_COLUMNS[field_name]
+            except KeyError as ex:
+                raise GatewayException("Unknown field") from ex
+
+            expression = expression.where(filter_(value))
 
         if sort:
             if ordering == Ordering.asc:
