@@ -49,7 +49,7 @@ class CampaignStatisticsGateway:
             try:
                 filter_ = self.FILTER_COLUMNS[field_name]
             except KeyError as ex:
-                raise GatewayException("Unknown field") from ex
+                raise GatewayException(f"Unknown field: {field_name}") from ex
 
             expression = expression.where(filter_(value))
 
