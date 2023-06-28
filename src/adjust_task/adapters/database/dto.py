@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import date
+from typing import Generator, Any
 
 from pydantic import BaseModel
 
@@ -32,3 +33,8 @@ class StatisticsDTO:
     channels: list[ColumnName] | None
     countries: list[ColumnName] | None
     os: list[ColumnName] | None
+
+    def __iter__(self):
+        for field in fields(self):
+            value = getattr(self, field.name)
+            yield field.name, value
