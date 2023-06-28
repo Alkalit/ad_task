@@ -1,6 +1,3 @@
-from collections.abc import Callable
-
-from pydantic import BaseModel
 from sqlalchemy import func
 
 from adjust_task.presentation.schemas import CampaignStatParams
@@ -8,19 +5,13 @@ from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
 from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from adjust_task.infrastructure.models import CampaignStat
 
-__all__ = ['Service', 'AnalyticsService']
+__all__ = ['AnalyticsService']
 
 
-class Service(Callable):
+class AnalyticsService:
 
     def __init__(self, campaign_gateway: CampaignStatisticsGateway):
         self.campaign_gateway = campaign_gateway
-
-    def __call__(self, params: BaseModel):
-        ...
-
-
-class AnalyticsService(Service):
 
     def __call__(self, params: CampaignStatParams) -> list[CampaignStatsDTO]:
         filters = StatisticsDTO(
