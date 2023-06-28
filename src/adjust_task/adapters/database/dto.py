@@ -34,7 +34,7 @@ class StatisticsDTO:
     countries: list[ColumnName] | None
     os: list[ColumnName] | None
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[tuple[str, Any], None, None]:
         for field in fields(self):
             value = getattr(self, field.name)
             yield field.name, value
