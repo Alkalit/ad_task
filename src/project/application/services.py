@@ -1,9 +1,9 @@
 from sqlalchemy import func
 
-from adjust_task.presentation.schemas import CampaignStatParams
-from adjust_task.adapters.database.gateways import CampaignStatisticsGateway
-from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
-from adjust_task.infrastructure.models import CampaignStat
+from project.presentation.schemas import CampaignStatParams
+from project.adapters.database.gateways import CampaignStatisticsGateway
+from project.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
+from project.infrastructure.models import CampaignStat
 
 __all__ = ['AnalyticsService']
 

@@ -5,7 +5,7 @@ from _decimal import Decimal
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from adjust_task.application.models import SortableFields, GroupbyFields, Ordering
+from project.application.models import SortableFields, GroupbyFields, Ordering
 
 __all__ = ['CampaignStatParams', 'CampaignStatSchema']
 

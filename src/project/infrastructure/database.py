@@ -2,9 +2,9 @@ from pathlib import Path
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker
 
-import adjust_task
+import project
 
-project_dir = Path(adjust_task.__file__).parent.parent.parent
+project_dir = Path(project.__file__).parent.parent.parent
 db_path = project_dir / 'app.sqlite3'
 
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{db_path}"

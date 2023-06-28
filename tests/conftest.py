@@ -4,8 +4,8 @@ from sqlalchemy import create_engine, Engine, event
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi.testclient import TestClient
 
-from adjust_task.infrastructure.models import Base
-from adjust_task.presentation.api import router
+from project.infrastructure.models import Base
+from project.presentation.api import router
 
 
 # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#serializable-isolation-savepoints-transactional-ddl

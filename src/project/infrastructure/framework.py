@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from adjust_task.presentation.api import router
+from project.presentation.api import router
 
 
 def setup_app(app: FastAPI) -> None:
