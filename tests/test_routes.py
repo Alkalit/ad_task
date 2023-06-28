@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from sqlalchemy.orm import Session
 
-from adjust_task.infrastructure.models import CampaignStat
+from project.infrastructure.models import CampaignStat
 
 
 @pytest.fixture(autouse=True)

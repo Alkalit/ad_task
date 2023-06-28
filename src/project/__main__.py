@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from adjust_task.infrastructure.framework import setup_api
-from adjust_task.infrastructure.database import setup_engine, setup_session
-from adjust_task.infrastructure.server import run_server
+from project.infrastructure.framework import setup_api
+from project.infrastructure.database import setup_engine, setup_session
+from project.infrastructure.server import run_server
 
 
 def main() -> None:

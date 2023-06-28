@@ -4,8 +4,8 @@ from typing import Generator, Any
 
 from pydantic import BaseModel
 
-from adjust_task.application.models import ColumnName
-from adjust_task.presentation.schemas import Money
+from project.application.models import ColumnName
+from project.presentation.schemas import Money
 
 __all__ = ['CampaignStatsDTO', 'StatisticsDTO']
 

@@ -6,9 +6,9 @@ from pydantic import parse_obj_as
 from sqlalchemy import select, Select, asc, desc, Column, ColumnElement, inspect
 from sqlalchemy.orm import Session, Mapper
 
-from adjust_task.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
-from adjust_task.infrastructure.models import CampaignStat
-from adjust_task.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF, ColumnName
+from project.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
+from project.infrastructure.models import CampaignStat
+from project.application.models import Ordering, GroupbyFields as GbF, SortableFields as SrtF, ColumnName
 
 __all__ = ['CampaignStatisticsGateway']
 
