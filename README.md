@@ -7,9 +7,13 @@
 
 # Installation and launch:
 `git clone https://github.com/Alkalit/adjust_task.git`
+
 in the project directory:
+
 `pip install -e .` requires pip version >= 23
+
 `alembic upgrade head`
+
 `python ./src/project/`
 
 my contact in telegram: @watercollector
