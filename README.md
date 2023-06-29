@@ -10,4 +10,4 @@
 in the project directory:
 `pip install -e .` requires pip version >= 23
 `alembic upgrade head`
-`python ./src/adjust_task/`
+`python ./src/project/`
