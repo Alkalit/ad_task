@@ -5,7 +5,7 @@
 - http://127.0.0.1:8000/?countries=CA&sort=cpi&groupby=channel&ordering=desc
 
 
-# Installation:
+# Installation and launch:
 `git clone https://github.com/Alkalit/adjust_task.git`
 in the project directory:
 `pip install -e .` requires pip version >= 23
