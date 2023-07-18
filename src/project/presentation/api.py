@@ -24,7 +24,7 @@ def get_service(
 
 
 @router.get("/")
-def root(
+async def root(
         params: Annotated[CampaignStatParams, Depends()],
         service: Annotated[AnalyticsService, Depends(get_service)],
 ) -> list[CampaignStatSchema]:
