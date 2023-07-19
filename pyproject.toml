@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 package-dir = { "" = "src" }
 
 [project]
-name = "adjust_task"
+name = "ad_task"
 version = "1.0"
 authors = [
     { name = "Alex", email = "lyoffa412@gmail.com" },
@@ -30,5 +30,5 @@ test = [
 
 
 [project.urls]
-"Homepage" = "https://github.com/Alkalit/adjust_task"
-"Bug Tracker" = "https://github.com/Alkalit/adjust_task/issues"
+"Homepage" = "https://github.com/Alkalit/ad_task"
+"Bug Tracker" = "https://github.com/Alkalit/ad_task/issues"

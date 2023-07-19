@@ -6,7 +6,7 @@
 
 
 # Installation and launch:
-`git clone https://github.com/Alkalit/adjust_task.git`
+`git clone https://github.com/Alkalit/ad_task.git`
 
 in the project directory:
 
