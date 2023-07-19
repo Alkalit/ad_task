@@ -84,12 +84,12 @@ class CampaignStatisticsGateway:
         return columns
 
     async def select_campaign_analytical_stats(self,
-                                         to_select: list[ColumnElement],
-                                         filters: StatisticsDTO,
-                                         sort: SrtF | None = None,
-                                         ordering: Ordering = Ordering.asc,
-                                         groupbys: list[GbF] = None,
-                                         ) -> list[CampaignStatsDTO]:
+                                               to_select: list[ColumnElement],
+                                               filters: StatisticsDTO,
+                                               sort: SrtF | None = None,
+                                               ordering: Ordering = Ordering.asc,
+                                               groupbys: list[GbF] = None,
+                                               ) -> list[CampaignStatsDTO]:
 
         if groupbys:
             groupby_columns = self._get_columns_by_name(groupbys)
