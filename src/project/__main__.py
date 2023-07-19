@@ -1,5 +1,5 @@
 from asyncio import run
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from project.infrastructure.framework import setup_api
 from project.infrastructure.database import setup_engine, setup_session
@@ -11,8 +11,7 @@ async def main() -> None:
     session_factory = setup_session(engine)
 
     app = setup_api()
-    app.dependency_overrides[Session] = lambda: session_factory()  # TODO async
-
+    app.dependency_overrides[AsyncSession] = lambda: session_factory()  # TODO async
     await run_server(app)
 
 

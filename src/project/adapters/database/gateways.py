@@ -4,7 +4,8 @@ from typing import Any, Callable
 from pydantic import parse_obj_as
 
 from sqlalchemy import select, Select, asc, desc, Column, ColumnElement, inspect
-from sqlalchemy.orm import Session, Mapper
+from sqlalchemy.orm import Mapper
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from project.adapters.database.dto import CampaignStatsDTO, StatisticsDTO
 from project.infrastructure.models import CampaignStat
@@ -26,7 +27,7 @@ class CampaignStatisticsGateway:
         'os': lambda arg: CampaignStat.os.in_(arg),
     }
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self._session = session
         self._mapper: Mapper = inspect(CampaignStat)
 
@@ -65,8 +66,8 @@ class CampaignStatisticsGateway:
 
         return expression
 
-    def _execute(self, expression: Select) -> list[CampaignStatsDTO]:
-        rows = self._session.execute(expression).all()
+    async def _execute(self, expression: Select) -> list[CampaignStatsDTO]:
+        rows = (await self._session.execute(expression)).all()
         stats = parse_obj_as(list[CampaignStatsDTO], rows)
         return stats
 
@@ -82,7 +83,7 @@ class CampaignStatisticsGateway:
 
         return columns
 
-    def select_campaign_analytical_stats(self,
+    async def select_campaign_analytical_stats(self,
                                          to_select: list[ColumnElement],
                                          filters: StatisticsDTO,
                                          sort: SrtF | None = None,
@@ -104,5 +105,5 @@ class CampaignStatisticsGateway:
 
         expression = self._setup_sql_params(expression, filters, sort, ordering, groupby_columns)
 
-        stats = self._execute(expression)
+        stats = await self._execute(expression)
         return stats

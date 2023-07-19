@@ -13,7 +13,7 @@ class AnalyticsService:
     def __init__(self, campaign_gateway: CampaignStatisticsGateway):
         self.campaign_gateway = campaign_gateway
 
-    def __call__(self, params: CampaignStatParams) -> list[CampaignStatsDTO]:
+    async def __call__(self, params: CampaignStatParams) -> list[CampaignStatsDTO]:
         filters = StatisticsDTO(
             date_from=params.date_from,
             date_to=params.date_to,
@@ -47,7 +47,7 @@ class AnalyticsService:
                     (CampaignStat.spend / CampaignStat.installs).label('cpi'),
                 ]
 
-        stats = self.campaign_gateway.select_campaign_analytical_stats(
+        stats = await self.campaign_gateway.select_campaign_analytical_stats(
             to_select,
             filters,
             params.sort,

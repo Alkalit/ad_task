@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from project.presentation.schemas import CampaignStatSchema, CampaignStatParams
 from project.application.services import AnalyticsService
@@ -13,7 +13,7 @@ __all__ = ['router']
 router = APIRouter()
 
 
-def get_campaign_gateway(session: Annotated[Session, Depends(Stub(Session))]) -> CampaignStatisticsGateway:
+def get_campaign_gateway(session: Annotated[AsyncSession, Depends(Stub(AsyncSession))]) -> CampaignStatisticsGateway:
     return CampaignStatisticsGateway(session)
 
 
@@ -28,5 +28,5 @@ async def root(
         params: Annotated[CampaignStatParams, Depends()],
         service: Annotated[AnalyticsService, Depends(get_service)],
 ) -> list[CampaignStatSchema]:
-    stats = service(params)
+    stats = await service(params)
     return stats
