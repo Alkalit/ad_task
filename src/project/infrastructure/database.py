@@ -1,5 +1,7 @@
 from pathlib import Path
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncEngine, AsyncSession
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
 
 import project
 
@@ -20,3 +22,10 @@ def setup_engine() -> AsyncEngine:
 def setup_session(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     session_factory = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return session_factory
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.close()

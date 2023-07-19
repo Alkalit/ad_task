@@ -12,7 +12,7 @@ authors = [
     { name = "Alex", email = "lyoffa412@gmail.com" },
 ]
 description = "Test task for adjust"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "fastapi==0.95.*",
     "httpx==0.24.*",
