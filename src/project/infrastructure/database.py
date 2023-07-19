@@ -13,8 +13,6 @@ def setup_engine() -> AsyncEngine:
     engine = create_async_engine(
         SQLALCHEMY_DATABASE_URL,
         connect_args=dict(check_same_thread=False),
-        echo=True,
-        echo_pool="debug",
     )
     return engine
 
