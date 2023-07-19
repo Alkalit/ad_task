@@ -20,6 +20,7 @@ dependencies = [
     "pydantic==1.10.*",
     "uvicorn==0.22.*",
     "alembic==1.11.1",
+    "gunicorn==21.2.0",
 ]
 [project.optional-dependencies]
 test = [

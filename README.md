@@ -14,6 +14,6 @@ in the project directory:
 
 `alembic upgrade head`
 
-`python ./src/project/`
+`gunicorn src.project.__main__:app -w 100 -k uvicorn.workers.UvicornWorker`
 
 my contact in telegram: @watercollector
