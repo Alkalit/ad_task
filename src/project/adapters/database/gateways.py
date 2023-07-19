@@ -105,4 +105,5 @@ class CampaignStatisticsGateway:
         expression = self._setup_sql_params(expression, filters, sort, ordering, groupby_columns)
 
         stats = self._execute(expression)
+        self._session.close()
         return stats
