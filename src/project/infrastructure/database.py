@@ -1,6 +1,7 @@
 from pathlib import Path
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import Engine
 
 import project
 
@@ -21,3 +22,10 @@ def setup_engine() -> Engine:
 def setup_session(engine) -> sessionmaker:
     session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return session_factory
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.close()
