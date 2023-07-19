@@ -23,7 +23,8 @@ dependencies = [
 ]
 [project.optional-dependencies]
 test = [
-    "pytest"
+    "pytest",
+    "locust==2.15.1",
 ]
 
 
