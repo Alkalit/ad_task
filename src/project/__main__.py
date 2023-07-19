@@ -11,7 +11,7 @@ async def main() -> None:
     session_factory = setup_session(engine)
 
     app = setup_api()
-    app.dependency_overrides[AsyncSession] = lambda: session_factory()  # TODO async
+    app.dependency_overrides[AsyncSession] = lambda: session_factory()
     await run_server(app)
 
 
