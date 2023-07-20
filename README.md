@@ -14,6 +14,6 @@ in the project directory:
 
 `alembic upgrade head`
 
-`python ./src/project/`
+`uvicorn --factory "src.project.main:main" --workers 32`
 
 my contact in telegram: @watercollector
