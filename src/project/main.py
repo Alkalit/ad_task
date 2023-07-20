@@ -13,8 +13,3 @@ def main():
     app.dependency_overrides[Session] = lambda: session_factory()
 
     return app
-    # return run_server(app)
-
-app = main()
-# if __name__ == '__main__':
-#     main()

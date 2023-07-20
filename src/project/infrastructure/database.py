@@ -27,8 +27,5 @@ def setup_session(engine) -> sessionmaker:
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA journal_mode = wal")
-    cursor.execute("pragma synchronous = normal")
-    cursor.execute("pragma temp_store = memory")
-    cursor.execute("pragma mmap_size = 30000000000")
+    cursor.execute("PRAGMA journal_mode = DELETE")
     cursor.close()
