@@ -2,20 +2,21 @@ from decimal import Decimal
 from datetime import date
 
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from httpx import Response
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from project.infrastructure.models import CampaignStat
 
 
 @pytest.fixture(autouse=True)
 def session_override(app, session):
-    app.dependency_overrides[Session] = lambda: session
+    app.dependency_overrides[AsyncSession] = lambda: session
 
 
-@pytest.fixture
-def data_sample(session: Session) -> tuple[CampaignStat]:
+@pytest_asyncio.fixture
+async def data_sample(session: AsyncSession) -> tuple[CampaignStat]:
     stat1 = CampaignStat(
         date=date(year=2001, month=1, day=1),
         channel='adcolony',
@@ -52,12 +53,11 @@ def data_sample(session: Session) -> tuple[CampaignStat]:
     session.add(stat1)
     session.add(stat2)
     session.add(stat3)
-    session.commit()
     return (stat1, stat2, stat3)
 
 
-@pytest.fixture
-def groupby_dataset(session: Session):
+@pytest_asyncio.fixture
+async def groupby_dataset(session: AsyncSession):
     stats = [
         CampaignStat(
             date=date(year=2001, month=1, day=1),
@@ -161,7 +161,8 @@ def groupby_dataset(session: Session):
             revenue=Decimal('333.3')
         ),
     ]
-    session.bulk_save_objects(stats)
+
+    await session.run_sync(lambda sync_session: sync_session.bulk_save_objects(stats))
 
 
 class TestRootEndpoint:

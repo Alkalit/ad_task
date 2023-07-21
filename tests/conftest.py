@@ -1,11 +1,22 @@
+import asyncio
 import pytest
+import pytest_asyncio
+from typing import Iterator
 from fastapi import FastAPI
-from sqlalchemy import create_engine, Engine, event
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import event
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSession, async_sessionmaker
 from fastapi.testclient import TestClient
 
 from project.infrastructure.models import Base
 from project.presentation.api import router
+
+
+@pytest.fixture(scope="session")
+def event_loop() -> Iterator[asyncio.AbstractEventLoop]:
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
 
 
 # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#serializable-isolation-savepoints-transactional-ddl
@@ -20,19 +31,23 @@ def do_begin(conn):
     conn.exec_driver_sql("BEGIN")
 
 
-@pytest.fixture(scope='session')
-def engine() -> Engine:
-    engine = create_engine('sqlite://',
-                           connect_args={'check_same_thread': False},
-                           echo=True,
-                           echo_pool="debug"
-                           )
+@pytest_asyncio.fixture(scope='session')
+async def engine() -> AsyncEngine:
+    engine = create_async_engine('sqlite+aiosqlite://',
+                                 connect_args={'check_same_thread': False},
+                                 echo=True,
+                                 echo_pool="debug"
+                                 )
 
-    event.listen(engine, "connect", do_connect)
-    event.listen(engine, "begin", do_begin)
-
-    Base.metadata.create_all(bind=engine)
+    event.listen(engine.sync_engine, "connect", do_connect)
+    event.listen(engine.sync_engine, "begin", do_begin)
     return engine
+
+
+@pytest_asyncio.fixture(autouse=True, scope='session')
+async def db(engine: AsyncEngine):
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
 
 
 @pytest.fixture(scope='session')
@@ -42,20 +57,17 @@ def app() -> FastAPI:
     return test_app
 
 
-@pytest.fixture
-def session(engine: Engine) -> Session:
+@pytest_asyncio.fixture(scope="function")
+async def session(engine: AsyncEngine) -> AsyncSession:
     """
     From the doc: https://tinyurl.com/mwhv5b9y
     """
-    connection = engine.connect()
-    transaction = connection.begin()
-
-    session_factory = sessionmaker()
-    session = session_factory(bind=connection, join_transaction_mode="create_savepoint")
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
+    async with engine.connect() as connection:
+        async with connection.begin():
+            session_factory = async_sessionmaker()
+            session = session_factory(bind=connection, join_transaction_mode="create_savepoint")
+            yield session
+            await session.close()
 
 
 @pytest.fixture
