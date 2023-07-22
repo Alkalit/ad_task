@@ -1,20 +1,8 @@
-from typing import AsyncGenerator, Callable
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import FastAPI
 
-from project.infrastructure.framework import setup_api
+from project.infrastructure.framework import setup_api, session_manager
 from project.infrastructure.database import setup_engine, setup_session
-
-
-def session_manager(
-        session_factory: Callable[[], AsyncSession]
-) -> Callable[[], AsyncGenerator[AsyncSession, None]]:
-
-    async def wrapper() -> AsyncGenerator[AsyncSession, None]:
-        session = session_factory()
-        yield session
-        await session.close()
-    return wrapper
 
 
 def main() -> FastAPI:
