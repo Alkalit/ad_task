@@ -1,5 +1,5 @@
-# The task description
-https://gist.github.com/kotik-adjust/4883e33c439db6de582fd0986939045c
+# The task description 
+https://shorturl.at/EGI15
 
 # tl;dr the urls:
 - http://127.0.0.1:8000/?date_from=2017-06-01&sort=clicks&groupby=channel&groupby=country&ordering=desc
